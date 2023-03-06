@@ -1,3 +1,4 @@
+"use strict";
 //Imports
 const express = require("express");
 const http = require('http');
