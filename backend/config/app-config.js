@@ -1,4 +1,4 @@
-//Imports
+/*required modules */
 const expressConfig = require('./express-config');
 const bodyParser = require('body-parser');
 const cors = require('cors');
