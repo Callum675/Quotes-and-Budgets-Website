@@ -7,7 +7,7 @@ RED="\e[31m"
 BLUE="\e[34m"
 UNSET="\e[0m"
 
-#install node/yarn
+#install node/yarn/mongo
 
 
 cd frontend
