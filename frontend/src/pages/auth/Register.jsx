@@ -18,10 +18,8 @@ export default function Register() {
   }, [cookies, navigate]);
 
   const [values, setValues] = useState({
-    username: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const toastOptions = {
@@ -42,7 +40,7 @@ export default function Register() {
     event.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/register",
+        "http://localhost:4000/api/user/register",
         {
           ...values,
         },
@@ -51,8 +49,13 @@ export default function Register() {
       if (data) {
         if (data.errors) {
           const { email, password } = data.errors;
-          if (email) generateError(email);
-          else if (password) generateError(password);
+          if (email) {
+            generateError(email)
+          } else if (email) {
+            generateError(email)
+          }else if (password) {
+            generateError(password)
+          }
         } else {
           navigate("/");
         }
@@ -71,12 +74,6 @@ export default function Register() {
             <h1>Refers</h1>
           </div>
           <input
-            type="text"
-            placeholder="Username"
-            name="username"
-            onChange={(e) => handleChange(e)}
-          />
-          <input
             type="email"
             placeholder="Email"
             name="email"
@@ -86,12 +83,6 @@ export default function Register() {
             type="password"
             placeholder="Password"
             name="password"
-            onChange={(e) => handleChange(e)}
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            name="confirmPassword"
             onChange={(e) => handleChange(e)}
           />
           <button type="submit">Create User</button>

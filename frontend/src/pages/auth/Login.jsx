@@ -16,7 +16,7 @@ export default function Login() {
     }
   }, [cookies, navigate]);
 
-  const [values, setValues] = useState({ username: "", password: "" });
+  const [values, setValues] = useState({ email: "", password: "" });
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -35,7 +35,7 @@ export default function Login() {
     event.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/login",
+        "http://localhost:4000/api/user/login",
         {
           ...values,
         },
@@ -43,8 +43,8 @@ export default function Login() {
       );
       if (data) {
         if (data.errors) {
-          const { username, password } = data.errors;
-          if (username) generateError(username);
+          const { email, password } = data.errors;
+          if (email) generateError(email);
           else if (password) generateError(password);
         } else {
           navigate("/");
@@ -65,8 +65,8 @@ export default function Login() {
           </div>
           <input
             type="text"
-            placeholder="Username"
-            name="username"
+            placeholder="Email"
+            name="email"
             onChange={(e) => handleChange(e)}
             min="3"
           />
