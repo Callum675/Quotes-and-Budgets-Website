@@ -1,9 +1,55 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import Logo from "../../assets/logo.svg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+export default function Main() {
+  const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies([]);
+  useEffect(() => {
+    const verifyUser = async () => {
+      if (!cookies.jwt) {
+        navigate("/login");
+      } else {
+        const { data } = await axios.post(
+          "http://localhost:4000",
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        if (!data.status) {
+          removeCookie("jwt");
+          navigate("/login");
+        } else
+          toast(`Hi ${data.user}`, {
+            theme: "light",
+          });
+      }
+    };
+    verifyUser();
+  }, [cookies, navigate, removeCookie]);
 
+  const logOut = () => {
+    removeCookie("jwt");
+    navigate("/login");
+  };
+  
+  return (
+    <>
+    <Container>
+      <div className="container">
+        <h1>Super Secret Page</h1>
+        <button onClick={logOut}>Log out</button>
+      </div>
+      </Container>
+    </>
+  );
+}
 
 const Container = styled.div`
   height: 100vh;
