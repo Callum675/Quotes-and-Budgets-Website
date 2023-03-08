@@ -37,7 +37,7 @@ mongoose
   });
 
 /*Routers*/
-const userRoute = require("./routes/userRoute.js");
+const userRoute = require("./routes/userRoutes.js");
 //const projectRoutes = require("./routers/projectRoutes.js");
 
 /*Routes*/

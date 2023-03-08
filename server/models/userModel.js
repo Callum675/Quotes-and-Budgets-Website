@@ -6,11 +6,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     auto: true,
   },
-  username: {
-    type: String,
-    required: [true, "Username is Required"],
-    unique: true,
-  },
   email: {
     type: String,
     required: [true, "Email is Required"],

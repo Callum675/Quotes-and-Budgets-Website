@@ -3,12 +3,19 @@ import axios from "axios";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import Logo from "../../assets/logo.svg";
+import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import Projects from "../components/Projects";
+import Welcome from "../components/Welcome";
+import ProjectContainer from "../components/ProjectContainer";
+
 export default function Main() {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [currentProject, setCurrentProject] = useState(undefined);
+ 
   const [cookies, setCookie, removeCookie] = useCookies([]);
   useEffect(() => {
     const verifyUser = async () => {
@@ -16,7 +23,7 @@ export default function Main() {
         navigate("/login");
       } else {
         const { data } = await axios.post(
-          "http://localhost:4000",
+          "http://localhost:4000/api/user",
           {},
           {
             withCredentials: true,
@@ -26,7 +33,7 @@ export default function Main() {
           removeCookie("jwt");
           navigate("/login");
         } else
-          toast(`Hi ${data.user}`, {
+          toast(`Hello ${data.user}`, {
             theme: "light",
           });
       }
@@ -38,14 +45,22 @@ export default function Main() {
     removeCookie("jwt");
     navigate("/login");
   };
+
+  const handleProjectChange = (project) => {
+    setCurrentProject(project);
+  };
   
   return (
     <>
-    <Container>
-      <div className="container">
-        <h1>Super Secret Page</h1>
-        <button onClick={logOut}>Log out</button>
-      </div>
+      <Container>
+        <div className="container">
+          <Projects projects={projects} changeProject={handleProjectChange} />
+          {currentProject === undefined ? (
+            <Welcome />
+          ) : (
+            <ProjectContainer currentProject={currentProject}/>
+          )}
+        </div>
       </Container>
     </>
   );
