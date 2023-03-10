@@ -37,12 +37,16 @@ mongoose
   });
 
 /*Routers*/
-const userRoute = require("./routes/userRoutes.js");
-//const projectRoutes = require("./routers/projectRoutes.js");
+const userRoutes = require("./routes/userRoutes.js");
+const projectRoutes = require("./routes/projectRoutes.js");
+const resourcesRoutes = require("./routes/resourcesRoutes.js");
+const workerRoutes = require("./routes/workerRoutes.js");
 
 /*Routes*/
-app.use("/api/user", userRoute);
-//app.use("/api/project", messageRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/project", projectRoutes);
+app.use("/api/resources", resourcesRoutes);
+app.use("/api/worker", workerRoutes);
 
 //404 handler and pass to error handler
 app.use((req, res, next) => {
