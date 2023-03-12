@@ -1,17 +1,26 @@
 const {
-  getWorkers,
-  getWorkerById,
   createWorker,
-  updateWorker,
+  getAllWorkers,
+  getWorkerById,
+  putWorker,
   deleteWorker,
 } = require("../controllers/workerController");
 
 const router = require("express").Router();
 
-router.get("/", getWorkers);
-router.get("/:id", getWorkerById);
+// Create a new worker
 router.post("/", createWorker);
-router.put("/:id", updateWorker);
+
+// Get all workers
+router.get("/", getAllWorkers);
+
+// Get a specific worker by ID
+router.get("/:id", getWorkerById);
+
+// Update a specific worker by ID
+router.put("/:id", putWorker);
+
+// Delete a specific worker by ID
 router.delete("/:id", deleteWorker);
 
 module.exports = router;

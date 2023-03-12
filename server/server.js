@@ -9,8 +9,8 @@ require("dotenv").config();
 const app = express();
 
 /*Make JSON sent in the request body available as req.body*/
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 /*Cross-Origin Resource Sharing*/
 app.use(cors());

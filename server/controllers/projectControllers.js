@@ -1,4 +1,5 @@
 const Project = require("../models/Project");
+const Worker = require("../models/Worker");
 const { validateObjectId } = require("../utils/validation");
 
 exports.getProjects = async (req, res) => {
@@ -43,13 +44,29 @@ exports.getProject = async (req, res) => {
 
 exports.postProject = async (req, res) => {
   try {
-    const { description } = req.body;
+    console.log(req.body);
+    const { description, workers, totalCost } = req.body;
+
     if (!description) {
       return res
         .status(400)
         .json({ status: false, msg: "Description of project not found" });
     }
-    const project = await Project.create({ user: req.user.id, description });
+
+    const workerIds = await Promise.all(
+      workers.map(async (workerData) => {
+        const worker = new Worker(workerData);
+        await worker.save();
+        return worker._id;
+      })
+    );
+
+    const project = await Project.create({
+      user: req.user.id,
+      description,
+      totalCost,
+      workers: workerIds,
+    });
     res
       .status(200)
       .json({ project, status: true, msg: "Project created successfully.." });
@@ -63,6 +80,7 @@ exports.postProject = async (req, res) => {
 
 exports.putProject = async (req, res) => {
   try {
+    console.log(req.body);
     const { description } = req.body;
     if (!description) {
       return res

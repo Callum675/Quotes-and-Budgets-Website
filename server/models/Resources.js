@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
-const resourceSchema = new mongoose.Schema({
+const resourcesSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
   name: {
     type: String,
     required: true,
@@ -20,4 +24,5 @@ const resourceSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Resource", resourceSchema);
+const Resources = mongoose.model("Resources", resourcesSchema);
+module.exports = Resources;

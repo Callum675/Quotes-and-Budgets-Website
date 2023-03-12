@@ -65,6 +65,7 @@ const Projects = () => {
 
                   </div>
                   <div className='whitespace-pre'>{project.description}</div>
+                  <div className='whitespace-pre'>{project.workers}</div>
                 </div>
               ))
 

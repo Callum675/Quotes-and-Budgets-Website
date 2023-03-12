@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const workerSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
   name: {
     type: String,
     required: true,
@@ -10,10 +14,11 @@ const workerSchema = new mongoose.Schema({
     enum: ["junior", "standard", "senior"],
     required: true,
   },
-  hourlyRate: {
+  manHours: {
     type: Number,
     required: true,
   },
 });
 
-module.exports = mongoose.model("Worker", workerSchema);
+const Worker = mongoose.model("Worker", workerSchema);
+module.exports = Worker;
