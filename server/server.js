@@ -1,31 +1,24 @@
 "use strict";
 /*Required Modules*/
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
-const createError = require("http-errors");
-const cookieParser = require("cookie-parser");
+const path = require("path");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
-
-/*Cross-Origin Resource Sharing*/
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
 
 /*Make JSON sent in the request body available as req.body*/
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
+/*Cross-Origin Resource Sharing*/
+app.use(cors());
 
 /*Mongo Database*/
+const mongoUrl = process.env.DB_URL;
 mongoose
-  .connect(process.env.DB_URL, {
+  .connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -36,41 +29,31 @@ mongoose
     console.log(err.message);
   });
 
-/*Routers*/
-const userRoutes = require("./routes/userRoutes.js");
-const projectRoutes = require("./routes/projectRoutes.js");
-const resourcesRoutes = require("./routes/resourcesRoutes.js");
-const workerRoutes = require("./routes/workerRoutes.js");
-
 /*Routes*/
-app.use("/api/user", userRoutes);
-app.use("/api/project", projectRoutes);
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
+const projectRoutes = require("./routes/projectRoutes");
+app.use("/api/projects", projectRoutes);
+
+const profileRoutes = require("./routes/profileRoutes");
+app.use("/api/profile", profileRoutes);
+
+/*const resourcesRoutes = require("./routes/resourcesRoutes");
 app.use("/api/resources", resourcesRoutes);
-app.use("/api/worker", workerRoutes);
 
-//404 handler and pass to error handler
-app.use((req, res, next) => {
-  /*
-  const err = new Error('Not found');
-  err.status = 404;
-  next(err);
-  */
-  // You can use the above code if your not using the http-errors module
-  next(createError(404, "Not found"));
-});
+const workerRoutes = require("./routes/workerRoutes");
+app.use("/api/worker", workerRoutes);*/
 
-//Error handler
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.send({
-    error: {
-      status: err.status || 500,
-      message: err.message,
-    },
-  });
-});
+// Serve static assets if in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../frontend/build")));
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"))
+  );
+}
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });

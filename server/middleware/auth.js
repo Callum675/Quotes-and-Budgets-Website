@@ -1,22 +1,31 @@
-const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const { ACCESS_TOKEN_SECRET } = process.env;
 
-module.exports.checkUser = (req, res, next) => {
-  const token = req.cookies.jwt;
-  if (token) {
-    jwt.verify(token, "super secret key", async (err, decodedToken) => {
-      if (err) {
-        res.json({ status: false });
-        next();
-      } else {
-        const user = await User.findById(decodedToken.id);
-        if (user) res.json({ status: true, user: user.username });
-        else res.json({ status: false });
-        next();
-      }
-    });
-  } else {
-    res.json({ status: false });
+
+exports.verifyAccessToken = async (req, res, next) => {
+
+  const token = req.header("Authorization");
+  if (!token) return res.status(400).json({ status: false, msg: "Token not found" });
+  let user;
+  try {
+    user = jwt.verify(token, ACCESS_TOKEN_SECRET);
+  }
+  catch (err) {
+    return res.status(401).json({ status: false, msg: "Invalid token" });
+  }
+
+  try {
+    user = await User.findById(user.id);
+    if (!user) {
+      return res.status(401).json({ status: false, msg: "User not found" });
+    }
+
+    req.user = user;
     next();
   }
-};
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ status: false, msg: "Internal Server Error" });
+  }
+}

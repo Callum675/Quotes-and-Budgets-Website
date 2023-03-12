@@ -1,97 +1,80 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import Logo from "../assets/logo.svg";
+import React, { useCallback, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import useFetch from '../hooks/useFetch';
+import Loader from './utils/Loader';
+import Tooltip from './utils/Tooltip';
 
-export default function Projects({ projects, changeProject}) {
-  const [currentSelected, setCurrentSelected] = useState(undefined);
-  
-  const changeCurrentProject = (index, project) => {
-    setCurrentSelected(index);
-    changeProject(project);
-  };
+const Projects = () => {
+
+  const authState = useSelector(state => state.authReducer);
+  const [projects, setProjects] = useState([]);
+  const [fetchData, { loading }] = useFetch();
+
+  const fetchProjects = useCallback(() => {
+    const config = { url: "/projects", method: "get", headers: { Authorization: authState.token } };
+    fetchData(config, { showSuccessToast: false }).then(data => setProjects(data.projects));
+  }, [authState.token, fetchData]);
+
+  useEffect(() => {
+    if (!authState.isLoggedIn) return;
+    fetchProjects();
+  }, [authState.isLoggedIn, fetchProjects]);
+
+
+  const handleDelete = (id) => {
+    const config = { url: `/projects/${id}`, method: "delete", headers: { Authorization: authState.token } };
+    fetchData(config).then(() => fetchProjects());
+  }
+
+
   return (
     <>
-      <Container>
-        <div className="brand">
-          <img src={Logo} alt="logo" />
-          <h3>Refer</h3>
-        </div>
-        <div className="projects">
-          {projects.map((project, index) => {
-            return (
-              <div
-                key={project._id}
-                className={`project ${
-                  index === currentSelected ? "selected" : ""
-                }`}
-                onClick={() => changeCurrentProject(index, project)}
-              >
-              </div>
-            );
-            })}
-        </div>
-      </Container>
-    </>
-  );
-}
-  
-const Container = styled.div`
-  display: grid;
-  grid-template-rows: 10% 75% 15%;
-  overflow: hidden;
-  background-color: #0ecfff;
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
-    img {
-      height: 2rem;
-    }
-    h3 {
-      color: white;
-      text-transform: uppercase;
-    }
-  }
-  .projects {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: auto;
-    gap: 0.8rem;
-    &::-webkit-scrollbar {
-      width: 0.2rem;
-      &-thumb {
-        background-color: #ffffff39;
-        width: 0.1rem;
-        border-radius: 1rem;
-      }
-    }
-    .project {
-      background-color: #ffffff34;
-      min-height: 5rem;
-      cursor: pointer;
-      width: 90%;
-      border-radius: 0.2rem;
-      padding: 0.4rem;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      transition: 0.5s ease-in-out;
-      .avatar {
-        img {
-          height: 3rem;
-        }
-      }
-    }
-    .selected {
-      background-color: #9a86f3;
-    }
-  }
+      <div className="my-2 mx-auto max-w-[700px] py-4">
 
-  
-    @media screen and (min-width: 720px) and (max-width: 1080px) {
-      gap: 0.5rem;
-    }
-  }
-`;
+        {projects.length !== 0 && <h2 className='my-2 ml-2 md:ml-0 text-xl'>Your projects ({projects.length})</h2>}
+        {loading ? (
+          <Loader />
+        ) : (
+          <div>
+            {projects.length === 0 ? (
+
+              <div className='w-[600px] h-[300px] flex items-center justify-center gap-4'>
+                <span>No projects found</span>
+                <Link to="/projects/add" className="bg-blue-500 text-white hover:bg-blue-600 font-medium rounded-md px-4 py-2">+ Add new project </Link>
+              </div>
+
+            ) : (
+              projects.map((project, index) => (
+                <div key={project._id} className='bg-white my-4 p-4 text-gray-600 rounded-md shadow-md'>
+                  <div className='flex'>
+
+                    <span className='font-medium'>Project #{index + 1}</span>
+
+                    <Tooltip text={"Edit this project"} position={"top"}>
+                      <Link to={`/projects/${project._id}`} className='ml-auto mr-2 text-green-600 cursor-pointer'>
+                        <i className="fa-solid fa-pen"></i>
+                      </Link>
+                    </Tooltip>
+
+                    <Tooltip text={"Delete this project"} position={"top"}>
+                      <span className='text-red-500 cursor-pointer' onClick={() => handleDelete(project._id)}>
+                        <i className="fa-solid fa-trash"></i>
+                      </span>
+                    </Tooltip>
+
+                  </div>
+                  <div className='whitespace-pre'>{project.description}</div>
+                </div>
+              ))
+
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  )
+
+}
+
+export default Projects

@@ -1,0 +1,20 @@
+{
+  "name": "quotes-and-budgets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-server": "npm run dev --prefix server",
+    "dev-client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
+    "install-all": "npm install && npm install --prefix frontend && npm install --prefix server",
+    "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix server",
+    "start": "cd server && node app.js"
+  },
+  "keywords": [],
+  "author": "Callum Mcintosh",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.1.0"
+  }
+}

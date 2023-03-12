@@ -3,7 +3,7 @@ const {
   createResource,
   updateResource,
   deleteResource,
-} = require("../controllers/resourceController.js");
+} = require("../controllers/resourcesController.js");
 
 const router = require("express").Router();
 
