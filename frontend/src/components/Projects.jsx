@@ -64,8 +64,10 @@ const Projects = () => {
                     </Tooltip>
 
                   </div>
-                  <div className='whitespace-pre'>{project.description}</div>
-                  <div className='whitespace-pre'>{project.workers}</div>
+                  <div className='whitespace-pre'>{"Quote: " + project.totalCost}</div>
+                  <div className='whitespace-pre'>{"Description: " +project.description}</div>
+                  <div className='whitespace-pre'>{"Workers: " +project.workers.map(worker => worker.name).join(', ')}</div>
+                  <div className='whitespace-pre'>{"Non-Human Resources: " +project.resources.map(worker => worker.name).join(', ')}</div>
                 </div>
               ))
 
@@ -75,7 +77,6 @@ const Projects = () => {
       </div>
     </>
   )
-
 }
 
 export default Projects

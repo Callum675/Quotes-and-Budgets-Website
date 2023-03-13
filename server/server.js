@@ -39,12 +39,6 @@ app.use("/api/projects", projectRoutes);
 const profileRoutes = require("./routes/profileRoutes");
 app.use("/api/profile", profileRoutes);
 
-/*const resourcesRoutes = require("./routes/resourcesRoutes");
-app.use("/api/resources", resourcesRoutes);
-
-const workerRoutes = require("./routes/workerRoutes");
-app.use("/api/worker", workerRoutes);*/
-
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.resolve(__dirname, "../frontend/build")));
