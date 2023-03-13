@@ -1,5 +1,5 @@
 #!/bin/bash
-#!Run Command: chmod +x setup.sh
+#Run Command: chmod +x setup.sh
 
 # Formating Varibles
 GREEN="\e[32m"
@@ -156,9 +156,9 @@ npm run install-all
 if [ $? -ne 0 ]; then
     echo -e "${RED}Error: Failed to install dependencies.${UNSET}"
     exit 1
+else
+    echo -e "${GREEN}Installed all dependencies.${GREEN}"
 fi
-
-echo -e "${GREEN}Installed all dependencies.${GREEN}"
 
 # Start MERN Application
 echo -e "${BLUE}Starting Quotes and Budgets Application...${UNSET}"

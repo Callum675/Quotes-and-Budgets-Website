@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+/**
+ * It takes an email address as a string, converts it to lowercase, and returns true if it matches the
+ * regex, and false if it doesn't
+ * @param email - The email address to validate.
+ * @returns A boolean value.
+ */
 const validateEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -8,11 +14,16 @@ const validateEmail = (email) => {
     );
 };
 
+/**
+ * It returns true if the string is a valid ObjectId, otherwise it returns false
+ * @param string - The string to validate.
+ * @returns A boolean value.
+ */
 const validateObjectId = (string) => {
   return mongoose.Types.ObjectId.isValid(string);
-}
+};
 
 module.exports = {
   validateEmail,
   validateObjectId,
-}
+};

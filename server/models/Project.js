@@ -11,9 +11,12 @@ const projectSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    description: {
+    name: {
       type: String,
       required: true,
+    },
+    description: {
+      type: String,
     },
     workers: [
       {

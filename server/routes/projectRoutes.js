@@ -2,6 +2,7 @@ const {
   getProjects,
   getProject,
   postProject,
+  putProjects,
   putProject,
   deleteProject,
 } = require("../controllers/projectControllers");
@@ -13,6 +14,7 @@ const router = require("express").Router();
 router.get("/", verifyAccessToken, getProjects);
 router.get("/:projectId", verifyAccessToken, getProject);
 router.post("/", verifyAccessToken, postProject);
+router.put("/", verifyAccessToken, putProjects);
 router.put("/:projectId", verifyAccessToken, putProject);
 router.delete("/:projectId", verifyAccessToken, deleteProject);
 
