@@ -48,8 +48,8 @@ const Projects = () => {
               projects.map((project, index) => (
                 <div key={project._id} className='bg-white my-4 p-4 text-gray-600 rounded-md shadow-md'>
                   <div className='flex'>
-
-                    <span className='font-medium'>Project #{index + 1}</span>
+                    
+                    <span className='font-medium'>{ project.name || `Project ${index + 1}` }</span>
 
                     <Tooltip text={"Edit this project"} position={"top"}>
                       <Link to={`/projects/${project._id}`} className='ml-auto mr-2 text-green-600 cursor-pointer'>
@@ -62,12 +62,15 @@ const Projects = () => {
                         <i className="fa-solid fa-trash"></i>
                       </span>
                     </Tooltip>
-
                   </div>
-                  <div className='whitespace-pre'>{"Quote: " + project.totalCost}</div>
-                  <div className='whitespace-pre'>{"Description: " +project.description}</div>
-                  <div className='whitespace-pre'>{"Workers: " +project.workers.map(worker => worker.name).join(', ')}</div>
-                  <div className='whitespace-pre'>{"Non-Human Resources: " +project.resources.map(worker => worker.name).join(', ')}</div>
+
+                  <Tooltip text={"Quote is calculated using Workers pay in hours and the cost of Non-Human Resources in one off payments"} position={"left"}>
+                    <div className='whitespace-pre'>{"Quote: £" + project.totalCost}</div>
+                  </Tooltip>
+                  <div className='whitespace-pre'>{"Description: " + project.description}</div>
+                  <div className='whitespace-pre'>{"Workers: " + project.workers.map(worker => worker.name).join(', ')}</div>
+                  <div className='whitespace-pre'>{"Non-Human Resources: " + project.resources.map(worker => worker.name).join(', ')}</div>
+                  
                 </div>
               ))
 

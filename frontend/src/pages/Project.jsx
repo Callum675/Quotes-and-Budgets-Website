@@ -17,6 +17,7 @@ const Project = () => {
   const mode = projectId === undefined ? "add" : "update";
   const [project, setProject] = useState(null);
   const [formData, setFormData] = useState({
+    name: "",
     description: "",
     workers: [],
     resources: [],
@@ -35,6 +36,7 @@ const Project = () => {
       fetchData(config, { showSuccessToast: false }).then((data) => {
         setProject(data.project);
         setFormData({ 
+          name: data.project.name,
           description: data.project.description, 
           workers: data.project.workers,
           resources: data.project.resources,
@@ -133,12 +135,14 @@ const Project = () => {
     e.preventDefault();
     if (mode === "update" && project) {
       setFormData({
+        name: project.name,
         description: project.description,
         workers: project.workers,
         resources: project.resources,
       });
     } else {
       setFormData({
+        name: "",
         description: "",
         workers: [],
         resources: [],
@@ -187,6 +191,12 @@ const Project = () => {
           ) : (
             <>
               <h2 className='text-center mb-4'>{mode === "add" ? "Add New Project" : "Edit Project"}</h2>
+
+              <div className="mb-4">
+                <label htmlFor="name">Name</label>
+                <input type="text" name="name" id="name" value={formData.name} placeholder="Project Name" onChange={handleChange} />
+                {fieldError("name")}
+              </div>
 
               <div className="mb-4">
                 <label htmlFor="description">Description</label>

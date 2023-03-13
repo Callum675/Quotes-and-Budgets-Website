@@ -51,12 +51,12 @@ exports.getProject = async (req, res) => {
 exports.postProject = async (req, res) => {
   try {
     console.log(req.body);
-    const { description, workers, resources } = req.body;
+    const { name, description, workers, resources } = req.body;
 
-    if (!description) {
+    if (!name) {
       return res
         .status(400)
-        .json({ status: false, msg: "Description of project not found" });
+        .json({ status: false, msg: "Name of project not found" });
     }
 
     const workerIds = await Promise.all(
@@ -80,6 +80,7 @@ exports.postProject = async (req, res) => {
 
     const project = await Project.create({
       user: req.user.id,
+      name,
       description,
       totalCost,
       workers: workerIds,
@@ -99,11 +100,11 @@ exports.postProject = async (req, res) => {
 exports.putProject = async (req, res) => {
   try {
     console.log(req.body);
-    const { description, workers, resources } = req.body;
-    if (!description) {
+    const { name, description, workers, resources } = req.body;
+    if (!name) {
       return res
         .status(400)
-        .json({ status: false, msg: "Description of project not found" });
+        .json({ status: false, msg: "Name of project not found" });
     }
 
     if (!validateObjectId(req.params.projectId)) {
@@ -168,6 +169,7 @@ exports.putProject = async (req, res) => {
     project = await Project.findByIdAndUpdate(
       req.params.projectId,
       {
+        name,
         description,
         totalCost,
         workers: filteredWorkerIds,
@@ -180,7 +182,9 @@ exports.putProject = async (req, res) => {
       .json({ project, status: true, msg: "Project updated successfully.." });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ status: false, msg: err.message });
+    return res
+      .status(500)
+      .json({ status: false, msg: "Internal Server Error" });
   }
 };
 
