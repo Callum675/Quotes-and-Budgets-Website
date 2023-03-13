@@ -193,19 +193,19 @@ const Project = () => {
               <h2 className='text-center mb-4'>{mode === "add" ? "Add New Project" : "Edit Project"}</h2>
 
               <div className="mb-4">
-                <label htmlFor="name">Name</label>
+                <label htmlFor="name">Name: </label>
                 <input type="text" name="name" id="name" value={formData.name} placeholder="Project Name" onChange={handleChange} />
                 {fieldError("name")}
               </div>
 
               <div className="mb-4">
-                <label htmlFor="description">Description</label>
+                <label htmlFor="description">Description: </label>
                 <Textarea type="description" name="description" id="description" value={formData.description} placeholder="Write here.." onChange={handleChange} />
                 {fieldError("description")}
               </div>
 
               <div className="mb-4">
-                <label htmlFor="workers">Workers</label>
+                <label htmlFor="workers">Workers: </label>
                 {formData.workers.map((worker, index) => (
                   <div key={index}>
                     <input type="text" name={`name`} value={worker.name} placeholder="Worker Name" onChange={(e) => handleChangeWorker(e, index)} />
@@ -216,9 +216,7 @@ const Project = () => {
                       <option value="senior">Senior</option>
                     </select>
                     <input type="number" name={`manHours`} value={worker.manHours} placeholder="Man Hours" onChange={(e) => handleChangeWorker(e, index)} />
-                    {index > 0 && (
-                      <button className="ml-4 bg-red-500 text-white px-4 py-2 font-medium" onClick={() => handleRemoveWorker(index)}>Remove</button>
-                    )}
+                    <button className="ml-4 bg-red-500 text-white px-4 py-2 font-medium" onClick={() => handleRemoveWorker(index)}>Remove</button>
                   </div>
                 ))}
                 <button className="bg-green-500 text-white px-4 py-2 font-medium" onClick={handleAddWorker}>Add Worker</button>
@@ -226,14 +224,12 @@ const Project = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="resources">Non-Human Resources</label>
+                <label htmlFor="resources">Non-Human Resources: </label>
                 {formData.resources.map((resource, index) => (
                   <div key={index}>
                     <input type="text" name={`name`} value={resource.name} placeholder="Resource Name" onChange={(e) => handleChangeResource(e, index)} />
                     <input type="number" name={`cost`} value={resource.cost} placeholder="Resource Cost" onChange={(e) => handleChangeResource(e, index)} />
-                    {index > 0 && (
-                      <button className="ml-4 bg-red-500 text-white px-4 py-2 font-medium" onClick={() => handleRemoveResource(index)}>Remove</button>
-                    )}
+                    <button className="ml-4 bg-red-500 text-white px-4 py-2 font-medium" onClick={() => handleRemoveResource(index)}>Remove</button>
                   </div>
                 ))}
                 <button className="bg-green-500 text-white px-4 py-2 font-medium" onClick={handleAddResource}>Add Resource</button>

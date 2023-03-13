@@ -188,6 +188,53 @@ exports.putProject = async (req, res) => {
   }
 };
 
+exports.putProjects = async (req, res) => {
+  try {
+    const projectId1 = req.body.projects[0];
+    const projectId2 = req.body.projects[1];
+
+    // Get the projects to be combined
+    const project1 = await Project.findById(projectId1);
+    const project2 = await Project.findById(projectId2);
+
+    // Check if both projects exist
+    if (!project1 || !project2) {
+      return res.status(404).json({ status: false, msg: "Project not found" });
+    }
+
+    // Combine the workers and resources arrays of the two projects and calculate the new total cost
+    const workers = [...project1.workers, ...project2.workers];
+    const resources = [...project1.resources, ...project2.resources];
+    const totalCost = project1.totalCost + project2.totalCost;
+
+    // Create a new project with the combined data
+    const combinedProject = new Project({
+      user: req.user.id,
+      name: project1.name + " & " + project2.name,
+      description: project1.description + " & " + project2.description,
+      workers,
+      resources,
+      totalCost,
+    });
+
+    // Save the new project to the database
+    const savedProject = await combinedProject.save();
+
+    // Delete the old projects from the database
+    await Project.findByIdAndDelete(project1);
+    await Project.findByIdAndDelete(project2);
+
+    res.status(200).json({
+      projectId: savedProject._id,
+      status: true,
+      msg: "Projects combined successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: false, msg: "Internal server error" });
+  }
+};
+
 exports.deleteProject = async (req, res) => {
   try {
     if (!validateObjectId(req.params.projectId)) {
