@@ -9,7 +9,7 @@
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
     "install-all": "npm install && npm install --prefix frontend && npm install --prefix server",
     "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix server",
-    "start": "cd server && node app.js"
+    "start": "cd server && node server.js"
   },
   "keywords": [],
   "author": "Callum Mcintosh",
