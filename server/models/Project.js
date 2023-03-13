@@ -33,7 +33,6 @@ const projectSchema = new mongoose.Schema(
     },
     fudgeFactor: {
       type: Number,
-      default: 1.0,
     },
   },
   {

@@ -19,7 +19,7 @@ const Project = () => {
   const [formData, setFormData] = useState({
     description: "",
     workers: [],
-    totalCost: 0, // initialize the total cost to 0
+    resources: [],
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -37,11 +37,11 @@ const Project = () => {
         setFormData({ 
           description: data.project.description, 
           workers: data.project.workers,
-          totalCost: calculateTotalCost(data.project.workers), // calculate the total cost based on the workers' information
+          resources: data.project.resources,
         });
       });
     }
-  }, [mode, authState, projectId, fetchData]);
+  }, [ mode, authState, projectId, fetchData]);
 
   const handleAddWorker = (event) => {
     event.preventDefault();
@@ -58,6 +58,21 @@ const Project = () => {
       ],
     });
   };
+
+  const handleAddResource = (event) => {
+    event.preventDefault();
+  
+    setFormData({
+      ...formData,
+      resources: [
+        ...formData.resources,
+        {
+          name: "",
+          cost: 0,
+        },
+      ],
+    });
+  };
   
   const handleRemoveWorker = (index) => {
     const updatedWorkers = [...formData.workers];
@@ -68,27 +83,13 @@ const Project = () => {
     });
   };
 
-  const calculateTotalCost = (workers) => {
-    let totalCost = 0;
-    for (const worker of workers) {
-      let hourlyRate;
-      switch (worker.payGrade) {
-        case "junior":
-          hourlyRate = 10;
-          break;
-        case "standard":
-          hourlyRate = 20;
-          break;
-        case "senior":
-          hourlyRate = 30;
-          break;
-        default:
-          hourlyRate = 0;
-      }
-      const cost = worker.manHours * hourlyRate;
-      totalCost += cost;
-    }
-    return totalCost;
+  const handleRemoveResource = (index) => {
+    const updatedResources = [...formData.resources];
+    updatedResources.splice(index, 1);
+    setFormData({
+      ...formData,
+      resources: updatedResources,
+    });
   };
 
   const handleChange = e => {
@@ -109,7 +110,21 @@ const Project = () => {
     setFormData({
       ...formData,
       workers: updatedWorkers,
-      totalCost: calculateTotalCost(updatedWorkers),
+    });
+    console.log(formData);
+  };
+
+  const handleChangeResource = (e, resourceIndex) => {
+    const { name, value } = e.target;
+    const updatedResource = {
+      ...formData.resources[resourceIndex],
+      [name]: value,
+    };
+    const updatedResources = [...formData.resources];
+    updatedResources[resourceIndex] = updatedResource;
+    setFormData({
+      ...formData,
+      resources: updatedResources,
     });
     console.log(formData);
   };
@@ -119,12 +134,14 @@ const Project = () => {
     if (mode === "update" && project) {
       setFormData({
         description: project.description,
-        workers: project.workers
+        workers: project.workers,
+        resources: project.resources,
       });
     } else {
       setFormData({
         description: "",
-        workers: []
+        workers: [],
+        resources: [],
       });
     }
   }
@@ -172,11 +189,6 @@ const Project = () => {
               <h2 className='text-center mb-4'>{mode === "add" ? "Add New Project" : "Edit Project"}</h2>
 
               <div className="mb-4">
-                <label htmlFor="total">Total Cost</label>
-                <input type="text" name="total" id="total" value={formData.totalCost} disabled />
-              </div>
-
-              <div className="mb-4">
                 <label htmlFor="description">Description</label>
                 <Textarea type="description" name="description" id="description" value={formData.description} placeholder="Write here.." onChange={handleChange} />
                 {fieldError("description")}
@@ -201,6 +213,21 @@ const Project = () => {
                 ))}
                 <button className="bg-green-500 text-white px-4 py-2 font-medium" onClick={handleAddWorker}>Add Worker</button>
                 {fieldError("workers")}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="resources">Non-Human Resources</label>
+                {formData.resources.map((resource, index) => (
+                  <div key={index}>
+                    <input type="text" name={`name`} value={resource.name} placeholder="Resource Name" onChange={(e) => handleChangeResource(e, index)} />
+                    <input type="number" name={`cost`} value={resource.cost} placeholder="Resource Cost" onChange={(e) => handleChangeResource(e, index)} />
+                    {index > 0 && (
+                      <button className="ml-4 bg-red-500 text-white px-4 py-2 font-medium" onClick={() => handleRemoveResource(index)}>Remove</button>
+                    )}
+                  </div>
+                ))}
+                <button className="bg-green-500 text-white px-4 py-2 font-medium" onClick={handleAddResource}>Add Resource</button>
+                {fieldError("resources")}
               </div>
 
               <button className='bg-primary text-white px-4 py-2 font-medium hover:bg-primary-dark' onClick={handleSubmit}>{mode === "add" ? "Add project" : "Update Project"}</button>
