@@ -39,7 +39,6 @@ const Projects = () => {
   
   const combineQuotes = () => {
     const selectedProjectsIds = projects.filter(project => selectedProjects.includes(project._id)).map(project => project._id);
-    console.log(selectedProjectsIds)
 
     //update database
     const config = {
@@ -49,10 +48,7 @@ const Projects = () => {
       data: { projects: selectedProjectsIds }
     };
     
-    fetchData(config).then(() => {
-      setProjects(selectedProjectsIds);
-      setSelectedProjects([]);
-    });
+    fetchData(config).then(() => fetchProjects());
   };
 
   return (

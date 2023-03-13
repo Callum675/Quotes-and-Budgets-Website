@@ -98,7 +98,6 @@ const Project = () => {
     setFormData({
       ...formData, [e.target.name]: e.target.value
     });
-    console.log(formData);
   }
 
   const handleChangeWorker = (e, workerIndex) => {
@@ -113,7 +112,6 @@ const Project = () => {
       ...formData,
       workers: updatedWorkers,
     });
-    console.log(formData);
   };
 
   const handleChangeResource = (e, resourceIndex) => {
@@ -128,7 +126,6 @@ const Project = () => {
       ...formData,
       resources: updatedResources,
     });
-    console.log(formData);
   };
 
   const handleReset = e => {

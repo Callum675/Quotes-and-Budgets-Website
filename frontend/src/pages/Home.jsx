@@ -22,7 +22,7 @@ const Home = () => {
           <div className='bg-primary text-white h-[40vh] py-8 text-center'>
             <h1 className='text-2xl'> Welcome to Quotes and Budgets App</h1>
             <Link to="/signup" className='mt-10 text-xl block space-x-2 hover:space-x-4'>
-              <span className='transition-[margin]'>Join now to manage the Cost of youe Projects</span>
+              <span className='transition-[margin]'>Join now to manage the Cost of your Projects</span>
               <span className='relative ml-4 text-base transition-[margin]'><i className="fa-solid fa-arrow-right"></i></span>
             </Link>
           </div>

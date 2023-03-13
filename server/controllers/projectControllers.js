@@ -50,7 +50,6 @@ exports.getProject = async (req, res) => {
 
 exports.postProject = async (req, res) => {
   try {
-    console.log(req.body);
     const { name, description, workers, resources } = req.body;
 
     if (!name) {
@@ -59,6 +58,8 @@ exports.postProject = async (req, res) => {
         .json({ status: false, msg: "Name of project not found" });
     }
 
+    /* Creating a new worker for each worker in the workers array and saving it to the database. It
+    then returns the id of the worker. */
     const workerIds = await Promise.all(
       workers.map(async (workerData) => {
         const worker = new Worker(workerData);
@@ -67,6 +68,8 @@ exports.postProject = async (req, res) => {
       })
     );
 
+    /* Creating a new resource for each resource in the resources array and saving it to the database.
+    It then returns the id of the resource. */
     const resourceIds = await Promise.all(
       resources.map(async (resourceData) => {
         const resource = new Resource(resourceData);
@@ -75,9 +78,11 @@ exports.postProject = async (req, res) => {
       })
     );
 
+    /* Generating a random number between 0.5 and 1.5 and then multiplying the total cost by that number. */
     const fudgeFactor = await generateFudgeFactor(req.params.projectId);
     const totalCost = await calculateTotalCost(workers, resources, fudgeFactor);
 
+    /* Creating a new project and saving it to the database. */
     const project = await Project.create({
       user: req.user.id,
       name,
@@ -99,14 +104,17 @@ exports.postProject = async (req, res) => {
 
 exports.putProject = async (req, res) => {
   try {
-    console.log(req.body);
     const { name, description, workers, resources } = req.body;
+    /* This is checking if the name of the project is not empty. If it is empty, it will return a 400
+   status code with a message saying that the name of the project was not found. */
     if (!name) {
       return res
         .status(400)
         .json({ status: false, msg: "Name of project not found" });
     }
 
+    /* This is checking if the id of the project is valid. If it is not valid, it will return a 400
+    status code with a message saying that the id of the project is not valid. */
     if (!validateObjectId(req.params.projectId)) {
       return res
         .status(400)
@@ -163,6 +171,7 @@ exports.putProject = async (req, res) => {
       });
     }
 
+    /* Generating a random number between 0.5 and 1.5 and then multiplying the total cost by that number. */
     const fudgeFactor = await generateFudgeFactor(req.params.projectId);
     const totalCost = await calculateTotalCost(workers, resources, fudgeFactor);
 
@@ -190,28 +199,32 @@ exports.putProject = async (req, res) => {
 
 exports.putProjects = async (req, res) => {
   try {
-    const projectId1 = req.body.projects[0];
-    const projectId2 = req.body.projects[1];
+    const projectIds = req.body.projects;
 
     // Get the projects to be combined
-    const project1 = await Project.findById(projectId1);
-    const project2 = await Project.findById(projectId2);
+    const projects = await Project.find({ _id: { $in: projectIds } });
 
-    // Check if both projects exist
-    if (!project1 || !project2) {
+    // Check if all projects exist
+    if (projects.length !== projectIds.length) {
       return res.status(404).json({ status: false, msg: "Project not found" });
     }
 
-    // Combine the workers and resources arrays of the two projects and calculate the new total cost
-    const workers = [...project1.workers, ...project2.workers];
-    const resources = [...project1.resources, ...project2.resources];
-    const totalCost = project1.totalCost + project2.totalCost;
+    // Combine the workers and resources arrays of the projects and calculate the new total cost
+    let workers = [];
+    let resources = [];
+    let totalCost = 0;
+
+    projects.forEach((project) => {
+      workers = [...workers, ...project.workers];
+      resources = [...resources, ...project.resources];
+      totalCost += project.totalCost;
+    });
 
     // Create a new project with the combined data
     const combinedProject = new Project({
       user: req.user.id,
-      name: project1.name + " & " + project2.name,
-      description: project1.description + " & " + project2.description,
+      name: projects.map((project) => project.name).join(" & "),
+      description: projects.map((project) => project.description).join(" & "),
       workers,
       resources,
       totalCost,
@@ -220,29 +233,28 @@ exports.putProjects = async (req, res) => {
     // Save the new project to the database
     const savedProject = await combinedProject.save();
 
-    // Delete the old projects from the database
-    await Project.findByIdAndDelete(project1);
-    await Project.findByIdAndDelete(project2);
-
     res.status(200).json({
       projectId: savedProject._id,
       status: true,
       msg: "Projects combined successfully",
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ status: false, msg: "Internal server error" });
   }
 };
 
 exports.deleteProject = async (req, res) => {
   try {
+    /* This is checking if the id of the project is valid. If it is not valid, it will return a 400
+        status code with a message saying that the id of the project is not valid. */
     if (!validateObjectId(req.params.projectId)) {
       return res
         .status(400)
         .json({ status: false, msg: "Project id not valid" });
     }
 
+    /* This is checking if the project exists. If it does not exist, it will return a 400 status code
+    with a message saying that the project with the given id was not found. */
     let project = await Project.findById(req.params.projectId);
     if (!project) {
       return res
@@ -250,6 +262,9 @@ exports.deleteProject = async (req, res) => {
         .json({ status: false, msg: "Project with given id not found" });
     }
 
+    /* This is checking if the user is the owner of the project. If the user is not the owner of the
+    project, it will return a 403 status code with a message saying that the user cannot delete the
+    project of another user. */
     if (project.user != req.user.id) {
       return res.status(403).json({
         status: false,
@@ -277,6 +292,11 @@ exports.deleteProject = async (req, res) => {
   }
 };
 
+/**
+ * It generates a random number between 0.5 and 1.5, saves it to the database, and returns it.
+ * @param projectId - the id of the project
+ * @returns The fudgeFactor is being returned.
+ */
 const generateFudgeFactor = async (projectId) => {
   let fudgeFactor;
   // check if fudge factor has already been generated for project
@@ -292,6 +312,14 @@ const generateFudgeFactor = async (projectId) => {
   return fudgeFactor;
 };
 
+/**
+ * It takes in an array of workers, an array of resources, and a fudge factor, and returns the total
+ * cost of the project
+ * @param workers - an array of objects, each object has a payGrade property and a manHours property
+ * @param resources - an array of objects, each object has a cost property
+ * @param fudgeFactor - a number between 0 and 1 that is used to fudge the total cost.
+ * @returns The total cost of the project.
+ */
 const calculateTotalCost = async (workers, resources, fudgeFactor) => {
   let totalCost = 0;
   for (const worker of workers) {
@@ -315,8 +343,7 @@ const calculateTotalCost = async (workers, resources, fudgeFactor) => {
   for (const resource of resources) {
     totalCost += Number(resource.cost);
   }
-  console.log(fudgeFactor);
   totalCost *= fudgeFactor;
-  console.log(totalCost);
+  totalCost.toFixed(2);
   return totalCost;
 };
