@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 const isValidEmail = (email) => {
   return String(email)
     .toLowerCase()
@@ -44,11 +46,37 @@ export const validate = (group, name, value) => {
     switch (name) {
       case "name": {
         if (!value) return "This field is required";
-        if (value.length > 20) return "Max. limit is 20 characters.";
+        if (value.length > 60) return "Max. limit is 60 characters.";
         return null;
       }
       case "description": {
         if (value.length > 100) return "Max. limit is 100 characters.";
+        return null;
+      }
+      case "workers": {
+        if (!Array.isArray(value))
+          return "Invalid data type. Expected an array.";
+
+        // Validate the name field of each worker object in the array
+        for (let i = 0; i < value.length; i++) {
+          const worker = value[i];
+          if (worker.name && worker.name.length > 30) {
+            return `Worker name at index ${i} exceeds the limit of 30 characters`;
+          }
+        }
+        return null;
+      }
+      case "resources": {
+        if (!Array.isArray(value))
+          return "Invalid data type. Expected an array.";
+
+        // Validate the name field of each worker object in the array
+        for (let i = 0; i < value.length; i++) {
+          const resource = value[i];
+          if (resource.name && resource.name.length > 30) {
+            return `resource name at index ${i} exceeds the limit of 30 characters`;
+          }
+        }
         return null;
       }
       default:
@@ -68,7 +96,8 @@ export const validate = (group, name, value) => {
 const validateManyFields = (group, list) => {
   const errors = [];
   for (const field in list) {
-    const err = validate(group, field, list[field]);
+    const value = list[field];
+    const err = validate(group, field, value);
     if (err) errors.push({ field, err });
   }
   return errors;
