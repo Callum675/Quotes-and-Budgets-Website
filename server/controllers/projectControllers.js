@@ -344,6 +344,6 @@ const calculateTotalCost = async (workers, resources, fudgeFactor) => {
     totalCost += Number(resource.cost);
   }
   totalCost *= fudgeFactor;
-  totalCost.toFixed(2);
+  totalCost = totalCost.toFixed(2);
   return totalCost;
 };
