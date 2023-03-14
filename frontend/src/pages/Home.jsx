@@ -10,10 +10,8 @@ const Home = () => {
   const { isLoggedIn } = authState;
 
   useEffect(() => {
-    document.title = authState.isLoggedIn ? `${authState.user.name}'s tasks` : "Task Manager";
+    document.title = authState.isLoggedIn ? `${authState.user.name}'s projects` : "Quotes and Budgets";
   }, [authState]);
-
-
 
   return (
     <>

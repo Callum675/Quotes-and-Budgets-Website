@@ -7,7 +7,6 @@ const isValidEmail = (email) => {
 };
 
 export const validate = (group, name, value) => {
-
   if (group === "signup") {
     switch (name) {
       case "name": {
@@ -24,11 +23,10 @@ export const validate = (group, name, value) => {
         if (value.length < 4) return "Password should be atleast 4 chars long";
         return null;
       }
-      default: return null;
+      default:
+        return null;
     }
-  }
-
-  else if (group === "login") {
+  } else if (group === "login") {
     switch (name) {
       case "email": {
         if (!value) return "This field is required";
@@ -39,27 +37,34 @@ export const validate = (group, name, value) => {
         if (!value) return "This field is required";
         return null;
       }
-      default: return null;
+      default:
+        return null;
     }
-  }
-  else if (group === "task") {
+  } else if (group === "project") {
     switch (name) {
-      case "description": {
+      case "name": {
         if (!value) return "This field is required";
+        if (value.length > 20) return "Max. limit is 20 characters.";
+        return null;
+      }
+      case "description": {
         if (value.length > 100) return "Max. limit is 100 characters.";
         return null;
       }
-      default: return null;
+      default:
+        return null;
     }
-  }
-
-  else {
+  } else {
     return null;
   }
+};
 
-}
-
-
+/**
+ * It takes a group of fields, and a list of fields to validate, and returns an array of errors
+ * @param group - the group of fields to validate
+ * @param list - an object with the fields to validate
+ * @returns An array of objects with the field and error message.
+ */
 const validateManyFields = (group, list) => {
   const errors = [];
   for (const field in list) {
@@ -67,5 +72,5 @@ const validateManyFields = (group, list) => {
     if (err) errors.push({ field, err });
   }
   return errors;
-}
+};
 export default validateManyFields;
