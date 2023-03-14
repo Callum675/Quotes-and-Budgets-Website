@@ -1,11 +1,13 @@
-import DOMPurify from "dompurify";
+const validator = require("validator");
 
+/**
+ * It takes an email address as a string, sanitizes it, and then validates it
+ * @param email - The email address to validate.
+ * @returns A boolean value.
+ */
 const isValidEmail = (email) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+  const sanitizedEmail = validator.normalizeEmail(email);
+  return validator.isEmail(sanitizedEmail);
 };
 
 export const validate = (group, name, value) => {
