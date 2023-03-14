@@ -82,18 +82,19 @@ else
     fi
 fi
 
-# Install React
-if ! command -v create-react-app &> /dev/null; then
-    echo -e "${BLUE}Installing create-react-app...${UNSET}"
-    if sudo npm install -g create-react-app; then
-        echo -e "${GREEN}create-react-app installed.${UNSET}"
+# Install openSSL
+if ! command -v openssl &> /dev/null; then
+    echo -e "${BLUE}Installing OpenSSL...${UNSET}"
+    if sudo apt-get install -y openssl; then
+        echo -e "${GREEN}OpenSSL installed.${UNSET}"
     else
-        echo -e "${RED}Error installing create-react-app.${UNSET}"
+        echo -e "${RED}Failed to install OpenSSL.${UNSET}"
         exit 1
     fi
 else
-    echo -e "${YELLOW}create-react-app already installed.${UNSET}"
+    echo -e "OpenSSL already installed.${UNSET}"
 fi
+
 
 # Clone Git repository
 if [ ! -d "Quotes-and-Budgets-Website" ]; then
@@ -169,6 +170,8 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}Error: Failed to start Quotes and Budgets Application.${UNSET}"
     exit 1
 fi
+
+#Create Users using Curl
 
 # All done
 echo -e "${GREEN}✅ Setup successful${UNSET}"

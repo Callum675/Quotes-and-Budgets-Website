@@ -4,6 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const cors = require("cors");
+const fs = require("fs");
+const https = require("https");
 require("dotenv").config();
 
 const app = express();
@@ -47,7 +49,18 @@ if (process.env.NODE_ENV === "production") {
   );
 }
 
+/* Read https Files. 
+// Generate a self-signed certificate using OpenSSL by running the following command:
+// openssl req -nodes -new -x509 -keyout server.key -out server.cert
+const options = {
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
+};*/
+
 const PORT = process.env.PORT || 5000;
+
+//Server Using Express App*/
+//const server = https.createServer(options, app);
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
