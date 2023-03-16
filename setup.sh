@@ -46,7 +46,7 @@ while [[ ! $git_name =~ ^[a-zA-Z]+$ ]]; do
     read -p "Enter your name for Git: " git_name
 done
 read -p "Enter your email for Git: " git_email
-while [[ ! $git_email =~ ^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$ ]]; do
+while [[ ! $git_email =~ ^([A-Za-z]+[A-Za-z0-9]*((\.|\-|\_)?[A-Za-z]+[A-Za-z0-9]*)*)@(([A-Za-z]+[A-Za-z0-9]*)+((\.|\-|\_)?([A-Za-z]+[A-Za-z0-9]*)+)*)+\.([A-Za-z]{2,})+$ ]]; do
     echo -e "${RED}Error: Please enter a valid email address.${UNSET}"
     read -p "Enter your email for Git: " git_email
 done
