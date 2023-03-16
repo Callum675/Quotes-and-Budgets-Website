@@ -77,8 +77,23 @@ else
     else
         # Install MongoDB
         echo -e "${BLUE}Installing MongoDB...${UNSET}"
-        sudo apt-get install -y mongodb || { echo -e "${RED}Failed to install MongoDB.${UNSET}"; exit 1; }
-        echo -e "${GREEN}MongoDB installed.${UNSET}"
+        
+        # Import the MongoDB public GPG key
+        wget -qO - https://www.mongodb.org/static/pgp/server-5.1.asc | sudo apt-key add -
+
+        # Create a list file for MongoDB
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/5.1 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.1.list
+
+        # Reload the local package database
+        sudo apt-get update
+
+        # Install the MongoDB Community Edition
+        sudo apt-get install -y mongodb-org || { echo -e "${RED}Failed to install MongoDB.${UNSET}"; exit 1; }
+
+        # Start MongoDB
+        sudo systemctl start mongod
+
+        echo -e "${GREEN}MongoDB installed and started.${UNSET}"
     fi
 fi
 
