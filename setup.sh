@@ -87,14 +87,14 @@ else
         # Reload the local package database
         sudo apt-get update
 
-        # Install MongoDB using the installation script:
-        curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.1.1.tgz
-        tar -zxvf mongodb-linux-x86_64-ubuntu2004-5.1.1.tgz
-        sudo mkdir -p /usr/local/mongodb
-        sudo cp -R mongodb-linux-x86_64-ubuntu2004-5.1.1/* /usr/local/mongodb/
+        # Install MongoDB:
+        sudo apt install -y mongodb-org
+
+        # Install the MongoDB Community Edition
+        sudo apt-get install -y mongodb-org || { echo -e "${RED}Failed to install MongoDB.${UNSET}"; exit 1; }
 
         # Start MongoDB
-        sudo /usr/local/mongodb/bin/mongod --dbpath /var/lib/mongodb
+        sudo systemctl start mongod
 
         echo -e "${GREEN}MongoDB installed and started.${UNSET}"
     fi
