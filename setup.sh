@@ -82,7 +82,7 @@ else
         wget -qO - https://www.mongodb.org/static/pgp/server-5.1.asc | sudo apt-key add -
 
         # Create a list file for MongoDB
-        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/5.1 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.1.list
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 
         # Reload the local package database
         sudo apt-get update
@@ -114,18 +114,21 @@ else
 fi
 
 
-# Clone Git repository
-if [ ! -d "Quotes-and-Budgets-Website" ]; then
-    echo -e "${BLUE}Cloning Git repository...${UNSET}"
-    git clone https://github.com/Callum675/Quotes-and-Budgets-Website.git
-    echo -e "${GREEN}Git repository cloned.${UNSET}"
+# Pull Git repository
+if [ -d "Quotes-and-Budgets-Website" ]; then
+    echo -e "${BLUE}Pulling Git repository...${UNSET}"
+    cd Quotes-and-Budgets-Website
+    git pull
+    cd ..
+    echo -e "${GREEN}Git repository pulled.${UNSET}"
 else
-    echo -e "${YELLOW}Git repository already cloned.${UNSET}"
+    echo -e "${RED}Error: Git repository not found.${UNSET}"
+    exit 1
 fi
 
-# Check if the Git clone was successful
+# Check if the Git pull was successful
 if [ $? -ne 0 ]; then
-    echo -e "${RED}Error: Failed to clone Git repository.${UNSET}"
+    echo -e "${RED}Error: Failed to pull Git repository.${UNSET}"
     exit 1
 fi
 
@@ -149,21 +152,6 @@ fi
 # Check if the .env file creation was successful
 if [ ! -f server/.env ]; then
     echo -e "${RED}Error: Failed to create .env file.${UNSET}"
-    exit 1
-fi
-
-# Start MongoDB
-if ! pgrep mongod &> /dev/null; then
-    echo -e "${BLUE}Starting MongoDB...${UNSET}"
-    sudo systemctl start mongodb
-    echo -e "${GREEN}MongoDB started.${UNSET}"
-else
-    echo -e "${YELLOW}MongoDB already running.${UNSET}"
-fi
-
-# Check if MongoDB was started successfully
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Error: Failed to start MongoDB.${UNSET}"
     exit 1
 fi
 
