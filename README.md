@@ -1,5 +1,27 @@
 # Quotes and Budgets
 
+# Requirements
+
+- Git
+- Node
+- MongoDB
+
+# Automatic Installation - Ubuntu Linux
+
+- Clone repo from github
+- chmod +x setup.sh
+- ./setup.sh
+- Follow setup process
+
+\*If any issues ocur doing Automatic Installation refer to manual installation process
+
+# Manual Installation
+
+- Ensure required software is installed from given requirements
+- Create .env file from given .env.example
+- npm run install-all
+- npm run dev
+
 # The MoSCoW functional requirements for this website are as follows:
 
 The website must:
