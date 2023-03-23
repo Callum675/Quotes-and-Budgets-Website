@@ -54,17 +54,17 @@ git config --global user.name "${git_name}" || { echo -e "${RED}Failed to set Gi
 git config --global user.email "${git_email}" || { echo -e "${RED}Failed to set Git email.${UNSET}"; exit 1; }
 echo -e "${GREEN}Git set up with your name and email.${UNSET}"
 
-# Install Node.js and npm
+# Install Node.js & Npm
 if ! command -v node &> /dev/null; then
-    echo -e "${BLUE}Installing Node.js and npm...${UNSET}"
-    if ! curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -; then
+    echo -e "${BLUE}Installing Node.js...${UNSET}"
+    if ! curl -sL https://deb.nodesource.com/setup_19.x | sudo -E bash -; then
         echo -e "${RED}Failed to add Node.js repository.${UNSET}"
         exit 1
     fi
-    sudo apt-get install -y nodejs npm || { echo -e "${RED}Failed to install Node.js and npm.${UNSET}"; exit 1; }
-    echo -e "${GREEN}Node.js and npm installed.${UNSET}"
+    sudo apt-get install -y nodejs || { echo -e "${RED}Failed to install Node.js.${UNSET}"; exit 1; }
+    echo -e "${GREEN}Node.js installed.${UNSET}"
 else
-    echo -e "${YELLOW}Node.js and npm already installed.${UNSET}"
+    echo -e "${YELLOW}Node.js already installed.${UNSET}"
 fi
 
 # Check if MongoDB is already installed
