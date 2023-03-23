@@ -57,11 +57,11 @@ echo -e "${GREEN}Git set up with your name and email.${UNSET}"
 # Install Node.js and npm
 if ! command -v node &> /dev/null; then
     echo -e "${BLUE}Installing Node.js and npm...${UNSET}"
-    if ! curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -; then
+    if ! curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -; then
         echo -e "${RED}Failed to add Node.js repository.${UNSET}"
         exit 1
     fi
-    sudo apt-get install -y nodejs || { echo -e "${RED}Failed to install Node.js and npm.${UNSET}"; exit 1; }
+    sudo apt-get install -y nodejs npm || { echo -e "${RED}Failed to install Node.js and npm.${UNSET}"; exit 1; }
     echo -e "${GREEN}Node.js and npm installed.${UNSET}"
 else
     echo -e "${YELLOW}Node.js and npm already installed.${UNSET}"
@@ -82,7 +82,7 @@ else
         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
 
         # Create a list file for MongoDB
-        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+        echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 
         # Reload the local package database
         sudo apt-get update
