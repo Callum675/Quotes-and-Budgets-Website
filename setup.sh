@@ -1,5 +1,6 @@
 #!/bin/bash
-#Run Command: chmod +x setup.sh
+#Give Execute Permission: chmod +x setup.sh
+#Run Command: ./setup.sh
 
 # Formating Varibles
 GREEN="\e[32m"
@@ -174,7 +175,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-#Create Users using Curl
+#Create Users using Curl -- Test
+curl --user admin_username:admin_password --header "Content-Type: application/json" --request POST --data '{"user":"user_name","pwd":"user_password","roles":["readWrite"]}' http://localhost:27017/admin/db.addUser
 
 # All done
 echo -e "${GREEN}✅ Setup successful${UNSET}"
