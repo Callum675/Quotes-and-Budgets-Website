@@ -78,7 +78,7 @@ else
     else
         # Install MongoDB
         echo -e "${BLUE}Installing MongoDB...${UNSET}"
-        
+
         # Import the MongoDB public GPG key
         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
 
@@ -175,8 +175,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-#Create Users using Curl -- Test
-curl --user admin_username:admin_password --header "Content-Type: application/json" --request POST --data '{"user":"user_name","pwd":"user_password","roles":["readWrite"]}' http://localhost:27017/admin/db.addUser
+#Create Users using Curl
+curl -X POST -H "Content-Type: application/json" -d @users.json http://localhost:27017/quote.users
 
 # All done
 echo -e "${GREEN}✅ Setup successful${UNSET}"
