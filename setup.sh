@@ -57,15 +57,16 @@ echo -e "${GREEN}Git set up with your name and email.${UNSET}"
 
 # Install Node.js & Npm
 if ! command -v node &> /dev/null; then
-    echo -e "${BLUE}Installing Node.js...${UNSET}"
+    echo -e "${BLUE}Installing Node.js & npm...${UNSET}"
     if ! curl -sL https://deb.nodesource.com/setup_19.x | sudo -E bash -; then
         echo -e "${RED}Failed to add Node.js repository.${UNSET}"
         exit 1
     fi
     sudo apt-get install -y nodejs || { echo -e "${RED}Failed to install Node.js.${UNSET}"; exit 1; }
-    echo -e "${GREEN}Node.js installed.${UNSET}"
+    sudo apt-get install -y npm || { echo -e "${RED}Failed to install npm.${UNSET}"; exit 1; }
+    echo -e "${GREEN}Node.js & npm installed.${UNSET}"
 else
-    echo -e "${YELLOW}Node.js already installed.${UNSET}"
+    echo -e "${YELLOW}Node.js & npm already installed.${UNSET}"
 fi
 
 # Check if MongoDB is already installed
@@ -108,16 +109,14 @@ if ! command -v openssl &> /dev/null; then
         exit 1
     fi
 else
-    echo -e "OpenSSL already installed.${UNSET}"
+    echo -e "${YELLOW}OpenSSL already installed.${UNSET}"
 fi
 
 
 # Pull Git repository
 if [ -d "Quotes-and-Budgets-Website" ]; then
     echo -e "${BLUE}Pulling Git repository...${UNSET}"
-    cd Quotes-and-Budgets-Website
     git pull
-    cd ..
     echo -e "${GREEN}Git repository pulled.${UNSET}"
 else
     echo -e "${RED}Error: Git repository not found.${UNSET}"
@@ -153,6 +152,19 @@ if [ ! -f server/.env ]; then
     exit 1
 fi
 
+#Create Defult Users using Curl
+curl -x POST -H "Content-Type: application/json" -d @users.json http://localhost:27017/quote.users
+
+# Send curl request to create new schema with default values
+if ! curl --fail --silent --show-error --request POST \
+         --header "Content-Type: application/json" \
+         --data @users.json \
+         http://localhost:3000/api/schema; then
+    echo -e "${RED}Failed to create schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Schema created.${UNSET}"
+
 # Install Dependencies
 echo -e "${BLUE}Installing Dependencies...${UNSET}"
 npm run install-all
@@ -174,9 +186,6 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}Error: Failed to start Quotes and Budgets Application.${UNSET}"
     exit 1
 fi
-
-#Create Users using Curl
-curl -X POST -H "Content-Type: application/json" -d @users.json http://localhost:27017/quote.users
 
 # All done
 echo -e "${GREEN}✅ Setup successful${UNSET}"
