@@ -22,8 +22,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.1",
-    "quotes-and-budgets": "file:..",
-    "validator": "^13.9.0"
+    "quotes-and-budgets": "file:.."
   },
   "devDependencies": {
     "nodemon": "^2.0.21"

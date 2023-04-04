@@ -29,6 +29,14 @@ if ! sudo apt-get update; then
 fi
 echo -e "${GREEN}System packages updated.${UNSET}"
 
+# Install curl
+echo -e "${BLUE}Installing curl...${UNSET}"
+if ! sudo apt-get install curl; then
+  echo -e "${RED}Failed to install curl.${UNSET}"
+  exit 1
+fi
+echo -e "${GREEN}curl installed.${UNSET}"
+
 # Install Git
 if ! command -v git &> /dev/null; then
     echo -e "${BLUE}Installing Git...${UNSET}"
@@ -39,33 +47,41 @@ else
     echo -e "${YELLOW}Git already installed.${UNSET}"
 fi
 
-# Set up Git with your name and email
-echo -e "${BLUE}Setting up Git with your name and email...${UNSET}"
-read -p "Enter your name for Git: " git_name
-while [[ ! $git_name =~ ^[a-zA-Z]+$ ]]; do
-    echo -e "${RED}Error: Please enter a valid name.${UNSET}"
+# Ask user if they would like to configure Git
+read -p "Would you like to configure Git? (y/n) " configure_git
+
+if [[ "$configure_git" == "y" ]]; then
+    # Set up Git with user's name and email
+    echo -e "${BLUE}Setting up Git with your name and email...${UNSET}"
     read -p "Enter your name for Git: " git_name
-done
-read -p "Enter your email for Git: " git_email
-while [[ ! $git_email =~ ^([A-Za-z]+[A-Za-z0-9]*((\.|\-|\_)?[A-Za-z]+[A-Za-z0-9]*)*)@(([A-Za-z]+[A-Za-z0-9]*)+((\.|\-|\_)?([A-Za-z]+[A-Za-z0-9]*)+)*)+\.([A-Za-z]{2,})+$ ]]; do
-    echo -e "${RED}Error: Please enter a valid email address.${UNSET}"
+    while [[ ! $git_name =~ ^[a-zA-Z]+$ ]]; do
+        echo -e "${RED}Error: Please enter a valid name.${UNSET}"
+        read -p "Enter your name for Git: " git_name
+    done
     read -p "Enter your email for Git: " git_email
-done
-git config --global user.name "${git_name}" || { echo -e "${RED}Failed to set Git username.${UNSET}"; exit 1; }
-git config --global user.email "${git_email}" || { echo -e "${RED}Failed to set Git email.${UNSET}"; exit 1; }
-echo -e "${GREEN}Git set up with your name and email.${UNSET}"
+    while [[ ! $git_email =~ ^([A-Za-z]+[A-Za-z0-9]*((\.|\-|\_)?[A-Za-z]+[A-Za-z0-9]*)*)@(([A-Za-z]+[A-Za-z0-9]*)+((\.|\-|\_)?([A-Za-z]+[A-Za-z0-9]*)+)*)+\.([A-Za-z]{2,})+$ ]]; do
+        echo -e "${RED}Error: Please enter a valid email address.${UNSET}"
+        read -p "Enter your email for Git: " git_email
+    done
+    git config --global user.name "${git_name}" || { echo -e "${RED}Failed to set Git username.${UNSET}"; exit 1; }
+    git config --global user.email "${git_email}" || { echo -e "${RED}Failed to set Git email.${UNSET}"; exit 1; }
+    echo -e "${GREEN}Git set up with your name and email.${UNSET}"
+else
+    echo -e "${YELLOW}Skipping Git configuration.${UNSET}"
+fi
 
 # Install Node.js & Npm
 if ! command -v node &> /dev/null; then
-    echo -e "${BLUE}Installing Node.js...${UNSET}"
+    echo -e "${BLUE}Installing Node.js & npm...${UNSET}"
     if ! curl -sL https://deb.nodesource.com/setup_19.x | sudo -E bash -; then
         echo -e "${RED}Failed to add Node.js repository.${UNSET}"
         exit 1
     fi
     sudo apt-get install -y nodejs || { echo -e "${RED}Failed to install Node.js.${UNSET}"; exit 1; }
-    echo -e "${GREEN}Node.js installed.${UNSET}"
+    sudo apt-get install -y npm || { echo -e "${RED}Failed to install npm.${UNSET}"; exit 1; }
+    echo -e "${GREEN}Node.js & npm installed.${UNSET}"
 else
-    echo -e "${YELLOW}Node.js already installed.${UNSET}"
+    echo -e "${YELLOW}Node.js & npm already installed.${UNSET}"
 fi
 
 # Check if MongoDB is already installed
@@ -108,27 +124,25 @@ if ! command -v openssl &> /dev/null; then
         exit 1
     fi
 else
-    echo -e "OpenSSL already installed.${UNSET}"
+    echo -e "${YELLOW}OpenSSL already installed.${UNSET}"
 fi
 
 
 # Pull Git repository
-if [ -d "Quotes-and-Budgets-Website" ]; then
-    echo -e "${BLUE}Pulling Git repository...${UNSET}"
-    cd Quotes-and-Budgets-Website
-    git pull
-    cd ..
-    echo -e "${GREEN}Git repository pulled.${UNSET}"
-else
-    echo -e "${RED}Error: Git repository not found.${UNSET}"
-    exit 1
-fi
+#if [ -d "Quotes-and-Budgets-Website" ]; then
+#    echo -e "${BLUE}Pulling Git repository...${UNSET}"
+#    git pull
+#    echo -e "${GREEN}Git repository pulled.${UNSET}"
+#else
+#    echo -e "${RED}Error: Git repository not found.${UNSET}"
+#    exit 1
+#fi
 
 # Check if the Git pull was successful
-if [ $? -ne 0 ]; then
-    echo -e "${RED}Error: Failed to pull Git repository.${UNSET}"
-    exit 1
-fi
+#if [ $? -ne 0 ]; then
+#    echo -e "${RED}Error: Failed to pull Git repository.${UNSET}"
+#    exit 1
+#fi
 
 # Create .env file for server
 if [ ! -f server/.env ]; then
@@ -153,6 +167,46 @@ if [ ! -f server/.env ]; then
     exit 1
 fi
 
+#Create Defult Users
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection users \
+         --file users.json --jsonArray; then
+    echo -e "${RED}Failed to create Users schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Users Schema created.${UNSET}"
+
+#Projects schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection projects \
+         --file projects.json --jsonArray; then
+    echo -e "${RED}Failed to create Projects schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Projects Schema created.${UNSET}"
+
+#Workers schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection workers \
+         --file workers.json --jsonArray; then
+    echo -e "${RED}Failed to create Workers schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Workers Schema created.${UNSET}"
+
+#Resources schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection resources \
+         --file resources.json --jsonArray; then
+    echo -e "${RED}Failed to create Resources schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Resources Schema created.${UNSET}"
+
 # Install Dependencies
 echo -e "${BLUE}Installing Dependencies...${UNSET}"
 npm run install-all
@@ -174,9 +228,6 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}Error: Failed to start Quotes and Budgets Application.${UNSET}"
     exit 1
 fi
-
-#Create Users using Curl
-curl -X POST -H "Content-Type: application/json" -d @users.json http://localhost:27017/quote.users
 
 # All done
 echo -e "${GREEN}✅ Setup successful${UNSET}"

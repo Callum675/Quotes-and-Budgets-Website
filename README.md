@@ -18,6 +18,7 @@
 # Manual Installation
 
 - Ensure required software is installed from given requirements
+- Clone repo from github
 - Create .env file from given .env.example
 - host a local mongoDB database
 - Run command: npm run install-all
