@@ -1,0 +1,157 @@
+[{
+  "_id": {
+    "$oid": "642c6d52bf6b581fc820ca67"
+  },
+  "user": {
+    "$oid": "642c6957bf6b581fc820ca50"
+  },
+  "name": "HR Budget",
+  "description": "The Budget for the HR Department",
+  "workers": [
+    {
+      "$oid": "642c6d52bf6b581fc820ca5d"
+    },
+    {
+      "$oid": "642c6d52bf6b581fc820ca5e"
+    },
+    {
+      "$oid": "642c6d52bf6b581fc820ca5f"
+    }
+  ],
+  "resources": [
+    {
+      "$oid": "642c6d52bf6b581fc820ca63"
+    }
+  ],
+  "totalCost": 3864,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680633170428"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680633170428"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dacbf6b581fc820ca7c"
+  },
+  "user": {
+    "$oid": "642c6957bf6b581fc820ca50"
+  },
+  "name": "R&D Buget",
+  "description": "The budget for the R&D Department ",
+  "workers": [
+    {
+      "$oid": "642c6dacbf6b581fc820ca72"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca73"
+    }
+  ],
+  "resources": [
+    {
+      "$oid": "642c6dacbf6b581fc820ca76"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca77"
+    }
+  ],
+  "totalCost": 26077.5,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680633260265"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680633260265"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dfbbf6b581fc820ca8f"
+  },
+  "user": {
+    "$oid": "642c6957bf6b581fc820ca50"
+  },
+  "name": "General Overheads",
+  "description": "General Overheads for Offices",
+  "workers": [],
+  "resources": [
+    {
+      "$oid": "642c6dfbbf6b581fc820ca87"
+    },
+    {
+      "$oid": "642c6dfbbf6b581fc820ca88"
+    },
+    {
+      "$oid": "642c6dfbbf6b581fc820ca89"
+    }
+  ],
+  "totalCost": 7370,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680633339881"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680633339881"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6e10bf6b581fc820ca9b"
+  },
+  "user": {
+    "$oid": "642c6957bf6b581fc820ca50"
+  },
+  "name": "HR Budget & R&D Buget",
+  "description": "The Budget for the HR Department & The budget for the R&D Department ",
+  "workers": [
+    {
+      "$oid": "642c6d52bf6b581fc820ca5d"
+    },
+    {
+      "$oid": "642c6d52bf6b581fc820ca5e"
+    },
+    {
+      "$oid": "642c6d52bf6b581fc820ca5f"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca72"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca73"
+    }
+  ],
+  "resources": [
+    {
+      "$oid": "642c6d52bf6b581fc820ca63"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca76"
+    },
+    {
+      "$oid": "642c6dacbf6b581fc820ca77"
+    }
+  ],
+  "totalCost": 29941.5,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680633360186"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680633360186"
+    }
+  },
+  "__v": 0
+}]

@@ -172,10 +172,40 @@ if ! mongoimport --host localhost:27017 \
          --db quote \
          --collection users \
          --file users.json --jsonArray; then
-    echo -e "${RED}Failed to create schema.${UNSET}"
+    echo -e "${RED}Failed to create Users schema.${UNSET}"
     exit 1
 fi
-echo -e "${GREEN}Schema created.${UNSET}"
+echo -e "${GREEN}Users Schema created.${UNSET}"
+
+#Projects schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection projects \
+         --file projects.json --jsonArray; then
+    echo -e "${RED}Failed to create Projects schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Projects Schema created.${UNSET}"
+
+#Workers schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection workers \
+         --file workers.json --jsonArray; then
+    echo -e "${RED}Failed to create Workers schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Workers Schema created.${UNSET}"
+
+#Resources schema generation
+if ! mongoimport --host localhost:27017 \
+         --db quote \
+         --collection resources \
+         --file resources.json --jsonArray; then
+    echo -e "${RED}Failed to create Resources schema.${UNSET}"
+    exit 1
+fi
+echo -e "${GREEN}Resources Schema created.${UNSET}"
 
 # Install Dependencies
 echo -e "${BLUE}Installing Dependencies...${UNSET}"

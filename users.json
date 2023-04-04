@@ -1,20 +1,49 @@
-[
-  {
-    "name": "user1",
-    "email": "user1@example.com",
-    "password": "pass1",
-    "role": "user"
+[{
+  "_id": {
+    "$oid": "642c6957bf6b581fc820ca50"
   },
-  {
-    "name": "user2",
-    "email": "user2@example.com",
-    "password": "pass2",
-    "role": "user"
+  "name": "Test1",
+  "email": "test1@testing.com",
+  "password": "$2b$10$iRc2GsP6Y.MbWyxOe3romOIRJRTs3tHV6HJR5VyimmJ/379eEnzKC",
+  "role": "User",
+  "joiningTime": {
+    "$date": {
+      "$numberLong": "1680632151562"
+    }
   },
-  {
-    "name": "user3",
-    "email": "user3@example.com",
-    "password": "pass3",
-    "role": "user"
-  }
-]
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680632151565"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680632151565"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c697abf6b581fc820ca53"
+  },
+  "name": "Test2",
+  "email": "test2@testing.com",
+  "password": "$2b$10$x/jcuQbULd2fB7ybkaP16O.vdXMt.59oI0YLF.Ivf8AqkX7CpcSfK",
+  "role": "User",
+  "joiningTime": {
+    "$date": {
+      "$numberLong": "1680632186994"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1680632186994"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1680632186994"
+    }
+  },
+  "__v": 0
+}]

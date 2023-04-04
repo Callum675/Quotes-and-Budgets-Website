@@ -1,16 +1,17 @@
-// Import the validator library
-const validator = require('validator');
+// Import libraries
+const DOMPurify = require('dompurify');
 
 /**
- * This function takes an email address as a string, sanitizes it, and then validates it
- * @param {string} email - The email address to validate.
- * @returns {boolean} A boolean value indicating whether the email is valid or not.
+ * It takes an email address as a string, converts it to lowercase, and returns true if it matches theregex, and false if it doesn't
+ * @param email - The email address to validate.
+ * @returns A boolean value.
  */
 const isValidEmail = (email) => {
-  // Normalize the email address
-  const sanitizedEmail = validator.normalizeEmail(email);
-  // Check if the email address is valid
-  return validator.isEmail(sanitizedEmail);
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    );
 };
 
 /**
@@ -26,20 +27,32 @@ export const validate = (group, name, value) => {
       case 'name': {
         // Check if the field is not empty
         if (!value) return 'This field is required';
+        // Sanitize user input
+        const sanitizedValue = DOMPurify.sanitize(value);
+        // Validate sanitized input
+        if (sanitizedValue !== value) return 'Invalid characters found in input';
         return null;
       }
       case 'email': {
         // Check if the field is not empty
         if (!value) return 'This field is required';
+        // Sanitize user input
+        const sanitizedValue = DOMPurify.sanitize(value);
+        // Validate sanitized input
+        if (sanitizedValue !== value) return 'Invalid characters found in input';
         // Check if the email address is valid
-        if (!isValidEmail(value)) return 'Please enter valid email address';
+        if (!isValidEmail(sanitizedValue)) return 'Please enter valid email address';
         return null;
       }
       case 'password': {
         // Check if the field is not empty
         if (!value) return 'This field is required';
+        // Sanitize user input
+        const sanitizedValue = DOMPurify.sanitize(value);
+        // Validate sanitized input
+        if (sanitizedValue !== value) return 'Invalid characters found in input';
         // Check if the password has at least 4 characters
-        if (value.length < 4) return 'Password should be atleast 4 chars long';
+        if (sanitizedValue.length < 8) return 'Password should be atleast 8 chars long';
         return null;
       }
       default:
@@ -65,6 +78,8 @@ export const validate = (group, name, value) => {
   } else if (group === 'project') {
     switch (name) {
       case 'name': {
+        // Sanitize the input using DOMPurify
+        value = DOMPurify.sanitize(value);
         // Check if the field is not empty
         if (!value) return 'This field is required';
         // Check if the name is longer than 60 characters
@@ -72,6 +87,8 @@ export const validate = (group, name, value) => {
         return null;
       }
       case 'description': {
+        // Sanitize the input using DOMPurify
+        value = DOMPurify.sanitize(value);
         // Check if the description is longer than 100 characters
         if (value.length > 100) return 'Max. limit is 100 characters.';
         return null;
@@ -83,8 +100,12 @@ export const validate = (group, name, value) => {
         // Validate the name field of each worker object in the array
         for (let i = 0; i < value.length; i++) {
           const worker = value[i];
-          if (worker.name && worker.name.length > 30) {
-            return `Worker name at index ${i} exceeds the limit of 30 characters`;
+          if (worker.name) {
+            // Sanitize the input using DOMPurify
+            worker.name = DOMPurify.sanitize(worker.name);
+            if (worker.name.length > 30) {
+              return `Worker name at index ${i} exceeds the limit of 30 characters`;
+            }
           }
         }
         return null;
@@ -96,8 +117,12 @@ export const validate = (group, name, value) => {
         // Validate the name field of each worker object in the array
         for (let i = 0; i < value.length; i++) {
           const resource = value[i];
-          if (resource.name && resource.name.length > 30) {
-            return `resource name at index ${i} exceeds the limit of 30 characters`;
+          if (resource.name) {
+            // Sanitize the input using DOMPurify
+            resource.name = DOMPurify.sanitize(resource.name);
+            if (resource.name.length > 30) {
+              return `resource name at index ${i} exceeds the limit of 30 characters`;
+            }
           }
         }
         return null;
