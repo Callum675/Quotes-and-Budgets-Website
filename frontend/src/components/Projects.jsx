@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
@@ -7,28 +7,34 @@ import Tooltip from './utils/Tooltip';
 
 const Projects = () => {
 
+  // Get authentication state from Redux store
   const authState = useSelector(state => state.authReducer);
+
+  // Define state variables
   const [projects, setProjects] = useState([]);
   const [fetchData, { loading }] = useFetch();
   //combine quotes logic
   const [selectedProjects, setSelectedProjects] = useState([]);
 
+  // Define function for fetching projects from API
   const fetchProjects = useCallback(() => {
     const config = { url: "/projects", method: "get", headers: { Authorization: authState.token } };
     fetchData(config, { showSuccessToast: false }).then(data => setProjects(data.projects));
   }, [authState.token, fetchData]);
 
+  // Call fetchProjects when authState.isLoggedIn changes
   useEffect(() => {
     if (!authState.isLoggedIn) return;
     fetchProjects();
   }, [authState.isLoggedIn, fetchProjects]);
 
-
+  // Define function for deleting a project
   const handleDelete = (id) => {
     const config = { url: `/projects/${id}`, method: "delete", headers: { Authorization: authState.token } };
     fetchData(config).then(() => fetchProjects());
   }
 
+  // Define function for handling checkbox changes
   const handleCheckboxChange = (id) => {
     if (selectedProjects.includes(id)) {
       setSelectedProjects(selectedProjects.filter(selectedId => selectedId !== id));
@@ -36,21 +42,24 @@ const Projects = () => {
       setSelectedProjects([...selectedProjects, id]);
     }
   };
-  
+
+  // Define function for combining selected quotes
   const combineQuotes = () => {
+    // Get IDs of selected projects
     const selectedProjectsIds = projects.filter(project => selectedProjects.includes(project._id)).map(project => project._id);
 
-    //update database
+    // Update database with combined quote
     const config = {
       url: `/projects`,
       method: "put",
       headers: { Authorization: authState.token },
       data: { projects: selectedProjectsIds }
     };
-    
+
     fetchData(config).then(() => fetchProjects());
   };
 
+  // Render component
   return (
     <>
       <div className="my-2 mx-auto max-w-[700px] py-4">
@@ -93,7 +102,7 @@ const Projects = () => {
                         onChange={() => handleCheckboxChange(project._id)}
                       />
                     </div>
-                    
+
                     <span className='font-medium'>{ project.name || `Project ${index + 1}` }</span>
 
                     <Tooltip text={"Edit this project"} position={"top"}>
@@ -115,7 +124,7 @@ const Projects = () => {
                   <div className='whitespace-pre'>{"Description: " + project.description}</div>
                   <div className='whitespace-pre'>{"Workers: " + project.workers.map(worker => worker.name).join(', ')}</div>
                   <div className='whitespace-pre'>{"Non-Human Resources: " + project.resources.map(worker => worker.name).join(', ')}</div>
-                  
+
                 </div>
               ))
 
