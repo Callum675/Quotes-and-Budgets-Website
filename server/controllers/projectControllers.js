@@ -1,50 +1,49 @@
-const Project = require("../models/Project");
-const Worker = require("../models/Worker");
-const Resource = require("../models/Resources");
+// Imports the necessary models and validation functions
+const Project = require('../models/Project');
+const Worker = require('../models/Worker');
+const Resource = require('../models/Resources');
+const { validateObjectId } = require('../utils/validation');
 
-const { validateObjectId } = require("../utils/validation");
-
+// This function gets all projects associated with the logged in user
 exports.getProjects = async (req, res) => {
   try {
-    const projects = await Project.find({ user: req.user.id })
-      .populate("workers")
-      .populate("resources");
-    res
-      .status(200)
-      .json({ projects, status: true, msg: "Projects found successfully.." });
+    // Find all projects that belong to the logged in user, and populate the workers and resources fields
+    const projects = await Project.find({ user: req.user.id }).populate('workers').populate('resources');
+    // Return the projects in JSON format with a success message and status code 200
+    res.status(200).json({ projects, status: true, msg: 'Projects found successfully..' });
   } catch (err) {
+    // If there is an error, log it and return an error message with status code 500
     console.error(err);
-    return res
-      .status(500)
-      .json({ status: false, msg: "Internal Server Error" });
+    return res.status(500).json({ status: false, msg: 'Internal Server Error' });
   }
 };
 
+// This function gets a single project associated with the logged in user, given a project ID
 exports.getProject = async (req, res) => {
   try {
+    // If the project ID is not valid, return an error message with status code 400
     if (!validateObjectId(req.params.projectId)) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Project id not valid" });
+      return res.status(400).json({ status: false, msg: 'Project id not valid' });
     }
 
+    // Find the project that belongs to the logged in user and has the given project ID, and populate the workers and resources fields
     const project = await Project.findOne({
       user: req.user.id,
       _id: req.params.projectId,
     })
-      .populate("workers")
-      .populate("resources");
+      .populate('workers')
+      .populate('resources');
+
+    // If no project is found, return an error message with status code 400
     if (!project) {
-      return res.status(400).json({ status: false, msg: "No project found.." });
+      return res.status(400).json({ status: false, msg: 'No project found..' });
     }
-    res
-      .status(200)
-      .json({ project, status: true, msg: "Project found successfully.." });
+    // Return the project in JSON format with a success message and status code 200
+    res.status(200).json({ project, status: true, msg: 'Project found successfully..' });
   } catch (err) {
+    // If there is an error, log it and return an error message with status code 500
     console.error(err);
-    return res
-      .status(500)
-      .json({ status: false, msg: "Internal Server Error" });
+    return res.status(500).json({ status: false, msg: 'Internal Server Error' });
   }
 };
 
@@ -53,9 +52,7 @@ exports.postProject = async (req, res) => {
     const { name, description, workers, resources } = req.body;
 
     if (!name) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Name of project not found" });
+      return res.status(400).json({ status: false, msg: 'Name of project not found' });
     }
 
     /* Creating a new worker for each worker in the workers array and saving it to the database. It
@@ -65,7 +62,7 @@ exports.postProject = async (req, res) => {
         const worker = new Worker(workerData);
         await worker.save();
         return worker._id;
-      })
+      }),
     );
 
     /* Creating a new resource for each resource in the resources array and saving it to the database.
@@ -75,7 +72,7 @@ exports.postProject = async (req, res) => {
         const resource = new Resource(resourceData);
         await resource.save();
         return resource._id;
-      })
+      }),
     );
 
     /* Generating a random number between 0.5 and 1.5 and then multiplying the total cost by that number. */
@@ -91,14 +88,10 @@ exports.postProject = async (req, res) => {
       workers: workerIds,
       resources: resourceIds,
     });
-    res
-      .status(200)
-      .json({ project, status: true, msg: "Project created successfully.." });
+    res.status(200).json({ project, status: true, msg: 'Project created successfully..' });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({ status: false, msg: "Internal Server Error" });
+    return res.status(500).json({ status: false, msg: 'Internal Server Error' });
   }
 };
 
@@ -108,17 +101,13 @@ exports.putProject = async (req, res) => {
     /* This is checking if the name of the project is not empty. If it is empty, it will return a 400
    status code with a message saying that the name of the project was not found. */
     if (!name) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Name of project not found" });
+      return res.status(400).json({ status: false, msg: 'Name of project not found' });
     }
 
     /* This is checking if the id of the project is valid. If it is not valid, it will return a 400
     status code with a message saying that the id of the project is not valid. */
     if (!validateObjectId(req.params.projectId)) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Project id not valid" });
+      return res.status(400).json({ status: false, msg: 'Project id not valid' });
     }
 
     const workerIds = await Promise.all(
@@ -133,7 +122,7 @@ exports.putProject = async (req, res) => {
         const worker = new Worker({ name, manHours, payGrade });
         await worker.save();
         return worker._id;
-      })
+      }),
     );
 
     // Remove any undefined or null values from the array
@@ -151,7 +140,7 @@ exports.putProject = async (req, res) => {
         const resource = new Resource({ name, cost });
         await resource.save();
         return resource._id;
-      })
+      }),
     );
 
     // Remove any undefined or null values from the array
@@ -159,9 +148,7 @@ exports.putProject = async (req, res) => {
 
     let project = await Project.findById(req.params.projectId);
     if (!project) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Project with given id not found" });
+      return res.status(400).json({ status: false, msg: 'Project with given id not found' });
     }
 
     if (project.user != req.user.id) {
@@ -184,16 +171,12 @@ exports.putProject = async (req, res) => {
         workers: filteredWorkerIds,
         resources: filteredResourceIds,
       },
-      { new: true }
+      { new: true },
     );
-    res
-      .status(200)
-      .json({ project, status: true, msg: "Project updated successfully.." });
+    res.status(200).json({ project, status: true, msg: 'Project updated successfully..' });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({ status: false, msg: "Internal Server Error" });
+    return res.status(500).json({ status: false, msg: 'Internal Server Error' });
   }
 };
 
@@ -206,7 +189,7 @@ exports.putProjects = async (req, res) => {
 
     // Check if all projects exist
     if (projects.length !== projectIds.length) {
-      return res.status(404).json({ status: false, msg: "Project not found" });
+      return res.status(404).json({ status: false, msg: 'Project not found' });
     }
 
     // Combine the workers and resources arrays of the projects and calculate the new total cost
@@ -223,8 +206,8 @@ exports.putProjects = async (req, res) => {
     // Create a new project with the combined data
     const combinedProject = new Project({
       user: req.user.id,
-      name: projects.map((project) => project.name).join(" & "),
-      description: projects.map((project) => project.description).join(" & "),
+      name: projects.map((project) => project.name).join(' & '),
+      description: projects.map((project) => project.description).join(' & '),
       workers,
       resources,
       totalCost,
@@ -236,10 +219,10 @@ exports.putProjects = async (req, res) => {
     res.status(200).json({
       projectId: savedProject._id,
       status: true,
-      msg: "Projects combined successfully",
+      msg: 'Projects combined successfully',
     });
   } catch (error) {
-    res.status(500).json({ status: false, msg: "Internal server error" });
+    res.status(500).json({ status: false, msg: 'Internal server error' });
   }
 };
 
@@ -248,18 +231,14 @@ exports.deleteProject = async (req, res) => {
     /* This is checking if the id of the project is valid. If it is not valid, it will return a 400
         status code with a message saying that the id of the project is not valid. */
     if (!validateObjectId(req.params.projectId)) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Project id not valid" });
+      return res.status(400).json({ status: false, msg: 'Project id not valid' });
     }
 
     /* This is checking if the project exists. If it does not exist, it will return a 400 status code
     with a message saying that the project with the given id was not found. */
     let project = await Project.findById(req.params.projectId);
     if (!project) {
-      return res
-        .status(400)
-        .json({ status: false, msg: "Project with given id not found" });
+      return res.status(400).json({ status: false, msg: 'Project with given id not found' });
     }
 
     /* This is checking if the user is the owner of the project. If the user is not the owner of the
@@ -281,14 +260,10 @@ exports.deleteProject = async (req, res) => {
     await Resource.deleteMany({ _id: { $in: resourceIds } });
 
     await Project.findByIdAndDelete(req.params.projectId);
-    res
-      .status(200)
-      .json({ status: true, msg: "Project deleted successfully.." });
+    res.status(200).json({ status: true, msg: 'Project deleted successfully..' });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({ status: false, msg: "Internal Server Error" });
+    return res.status(500).json({ status: false, msg: 'Internal Server Error' });
   }
 };
 
@@ -325,13 +300,13 @@ const calculateTotalCost = async (workers, resources, fudgeFactor) => {
   for (const worker of workers) {
     let hourlyRate;
     switch (worker.payGrade) {
-      case "junior":
+      case 'junior':
         hourlyRate = 10;
         break;
-      case "standard":
+      case 'standard':
         hourlyRate = 20;
         break;
-      case "senior":
+      case 'senior':
         hourlyRate = 30;
         break;
       default:

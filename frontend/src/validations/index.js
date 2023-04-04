@@ -1,63 +1,84 @@
-const validator = require("validator");
+// Import the validator library
+const validator = require('validator');
 
 /**
- * It takes an email address as a string, sanitizes it, and then validates it
- * @param email - The email address to validate.
- * @returns A boolean value.
+ * This function takes an email address as a string, sanitizes it, and then validates it
+ * @param {string} email - The email address to validate.
+ * @returns {boolean} A boolean value indicating whether the email is valid or not.
  */
 const isValidEmail = (email) => {
+  // Normalize the email address
   const sanitizedEmail = validator.normalizeEmail(email);
+  // Check if the email address is valid
   return validator.isEmail(sanitizedEmail);
 };
 
+/**
+ * This function validates a specific field of a group (signup, login, or project)
+ * @param {string} group - The group of fields to validate.
+ * @param {string} name - The name of the field to validate.
+ * @param {*} value - The value of the field to validate.
+ * @returns {string|null} A string containing an error message if the field is invalid, or null if it is valid.
+ */
 export const validate = (group, name, value) => {
-  if (group === "signup") {
+  if (group === 'signup') {
     switch (name) {
-      case "name": {
-        if (!value) return "This field is required";
+      case 'name': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
         return null;
       }
-      case "email": {
-        if (!value) return "This field is required";
-        if (!isValidEmail(value)) return "Please enter valid email address";
+      case 'email': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
+        // Check if the email address is valid
+        if (!isValidEmail(value)) return 'Please enter valid email address';
         return null;
       }
-      case "password": {
-        if (!value) return "This field is required";
-        if (value.length < 4) return "Password should be atleast 4 chars long";
+      case 'password': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
+        // Check if the password has at least 4 characters
+        if (value.length < 4) return 'Password should be atleast 4 chars long';
         return null;
       }
       default:
         return null;
     }
-  } else if (group === "login") {
+  } else if (group === 'login') {
     switch (name) {
-      case "email": {
-        if (!value) return "This field is required";
-        if (!isValidEmail(value)) return "Please enter valid email address";
+      case 'email': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
+        // Check if the email address is valid
+        if (!isValidEmail(value)) return 'Please enter valid email address';
         return null;
       }
-      case "password": {
-        if (!value) return "This field is required";
+      case 'password': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
         return null;
       }
       default:
         return null;
     }
-  } else if (group === "project") {
+  } else if (group === 'project') {
     switch (name) {
-      case "name": {
-        if (!value) return "This field is required";
-        if (value.length > 60) return "Max. limit is 60 characters.";
+      case 'name': {
+        // Check if the field is not empty
+        if (!value) return 'This field is required';
+        // Check if the name is longer than 60 characters
+        if (value.length > 60) return 'Max. limit is 60 characters.';
         return null;
       }
-      case "description": {
-        if (value.length > 100) return "Max. limit is 100 characters.";
+      case 'description': {
+        // Check if the description is longer than 100 characters
+        if (value.length > 100) return 'Max. limit is 100 characters.';
         return null;
       }
-      case "workers": {
-        if (!Array.isArray(value))
-          return "Invalid data type. Expected an array.";
+      case 'workers': {
+        // Check if the value is an array
+        if (!Array.isArray(value)) return 'Invalid data type. Expected an array.';
 
         // Validate the name field of each worker object in the array
         for (let i = 0; i < value.length; i++) {
@@ -68,9 +89,9 @@ export const validate = (group, name, value) => {
         }
         return null;
       }
-      case "resources": {
-        if (!Array.isArray(value))
-          return "Invalid data type. Expected an array.";
+      case 'resources': {
+        // Check if the value is an array
+        if (!Array.isArray(value)) return 'Invalid data type. Expected an array.';
 
         // Validate the name field of each worker object in the array
         for (let i = 0; i < value.length; i++) {
@@ -96,12 +117,22 @@ export const validate = (group, name, value) => {
  * @returns An array of objects with the field and error message.
  */
 const validateManyFields = (group, list) => {
+  // Create an empty array to hold the errors.
   const errors = [];
+
+  // Iterate through each field in the list.
   for (const field in list) {
+    // Get the value of the current field.
     const value = list[field];
+
+    // Call the validate function with the current field, value, and group.
     const err = validate(group, field, value);
+
+    // If an error is returned, push an object with the field and error message to the errors array.
     if (err) errors.push({ field, err });
   }
+  // Return the array of errors.
   return errors;
 };
+// Export the function as a default export.
 export default validateManyFields;

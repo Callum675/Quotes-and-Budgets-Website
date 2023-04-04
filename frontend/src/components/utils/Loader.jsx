@@ -1,3 +1,4 @@
+//Loading Bar React Component
 import React from 'react'
 
 const Loader = () => {

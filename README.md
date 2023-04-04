@@ -19,8 +19,9 @@
 
 - Ensure required software is installed from given requirements
 - Create .env file from given .env.example
-- npm run install-all
-- npm run dev
+- host a local mongoDB database
+- Run command: npm run install-all
+- Run command: npm run dev
 
 # The MoSCoW functional requirements for this website are as follows:
 

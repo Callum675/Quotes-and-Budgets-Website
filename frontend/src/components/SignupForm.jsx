@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import validateManyFields from '../validations';
@@ -7,37 +7,50 @@ import Loader from './utils/Loader';
 
 const SignupForm = () => {
 
+  // Declare state variables using the useState hook
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: ""
   });
+
+  // Use the useFetch hook to handle API requests
   const [fetchData, { loading }] = useFetch();
+
+  // Use the useNavigate hook to handle navigation between pages
   const navigate = useNavigate();
 
+  // Handle changes in the form inputs
   const handleChange = e => {
     setFormData({
       ...formData, [e.target.name]: e.target.value
     });
   }
 
+  // Handle form submission
   const handleSubmit = e => {
     e.preventDefault();
+    // Validate form data using external validation function
     const errors = validateManyFields("signup", formData);
+    // Clear previous form errors
     setFormErrors({});
+    // If there are errors, set form error state with the errors
     if (errors.length > 0) {
       setFormErrors(errors.reduce((total, ob) => ({ ...total, [ob.field]: ob.err }), {}));
       return;
     }
 
+    // If there are no errors, make an API request to sign up the user
     const config = { url: "/auth/signup", method: "post", data: formData };
     fetchData(config).then(() => {
+      // After signing up, navigate to the login page
       navigate("/login");
     });
 
   }
 
+  // Helper function to render a field error message if there is an error for the given field
   const fieldError = (field) => (
     <p className={`mt-1 text-pink-600 text-sm ${formErrors[field] ? "block" : "hidden"}`}>
       <i className='mr-2 fa-solid fa-circle-exclamation'></i>
@@ -45,6 +58,7 @@ const SignupForm = () => {
     </p>
   )
 
+  // Render the SignupForm component
   return (
     <>
       <form className='m-auto my-16 max-w-[500px] p-8 bg-white border-2 shadow-md rounded-md'>
