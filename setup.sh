@@ -167,10 +167,9 @@ if [ ! -f server/.env ]; then
     exit 1
 fi
 
-#Create Defult Users using Curl
+#Create Defult Users
 if ! mongoimport --host localhost:27017 \
          --db quote \
-         --data @users.json \
          --collection users \
          --file users.json --jsonArray; then
     echo -e "${RED}Failed to create schema.${UNSET}"
