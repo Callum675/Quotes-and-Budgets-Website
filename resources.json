@@ -1,0 +1,55 @@
+[{
+  "_id": {
+    "$oid": "642c6d52bf6b581fc820ca63"
+  },
+  "name": "Software Licenses",
+  "cost": 4000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dacbf6b581fc820ca76"
+  },
+  "name": "Materials",
+  "cost": 20000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dacbf6b581fc820ca77"
+  },
+  "name": "Testing",
+  "cost": 6000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dfbbf6b581fc820ca87"
+  },
+  "name": "Water",
+  "cost": 1000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dfbbf6b581fc820ca88"
+  },
+  "name": "Electricity ",
+  "cost": 2000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642c6dfbbf6b581fc820ca89"
+  },
+  "name": "Rent ",
+  "cost": 8000,
+  "recurring": false,
+  "interval": "month",
+  "__v": 0
+}]

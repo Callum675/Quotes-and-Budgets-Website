@@ -78,19 +78,23 @@ export const validate = (group, name, value) => {
   } else if (group === 'project') {
     switch (name) {
       case 'name': {
-        // Sanitize the input using DOMPurify
-        value = DOMPurify.sanitize(value);
         // Check if the field is not empty
         if (!value) return 'This field is required';
+        // Sanitize project name input
+        const sanitizedValue = DOMPurify.sanitize(value);
+        // Validate sanitized input
+        if (sanitizedValue !== value) return 'Invalid characters found in project name';
         // Check if the name is longer than 60 characters
-        if (value.length > 60) return 'Max. limit is 60 characters.';
+        if (value.sanitizedValue > 60) return 'Max. limit is 60 characters.';
         return null;
       }
       case 'description': {
-        // Sanitize the input using DOMPurify
-        value = DOMPurify.sanitize(value);
+        // Sanitize project description input
+        const sanitizedValue = DOMPurify.sanitize(value);
+        // Validate sanitized input
+        if (sanitizedValue !== value) return 'Invalid characters found in project name';
         // Check if the description is longer than 100 characters
-        if (value.length > 100) return 'Max. limit is 100 characters.';
+        if (sanitizedValue.length > 100) return 'Max. limit is 100 characters.';
         return null;
       }
       case 'workers': {
